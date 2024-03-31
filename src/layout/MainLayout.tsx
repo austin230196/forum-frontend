@@ -39,6 +39,12 @@ const MainLayoutWrapper = styled.div<{$showSidebar: Boolean}>`
         grid-template-columns: ${props => props.$showSidebar && '100px 1fr !important'};
         gap: 20px;
     }
+
+    @media screen and (max-width:595px){
+        grid-template-columns: ${props => props.$showSidebar && '1fr !important'};
+        grid-template-rows: ${props => props.$showSidebar && '100px 1fr !important'};
+        gap: 0px;
+    }
 `;
 const MainLayoutBody = styled.div`
     width: 100%;

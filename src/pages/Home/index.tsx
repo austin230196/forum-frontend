@@ -49,7 +49,7 @@ const Home = () => {
                         <option value="latest">Latest</option>
                         <option value="oldest">Oldest</option>
                     </select>
-                    <select value={category} onChange={ev => setCategory(_ => ev.target.value as ('latest' | 'oldest'))}>
+                    <select className="home__top_categories" value={category} onChange={ev => setCategory(_ => ev.target.value as ('latest' | 'oldest'))}>
                         <option value="">All</option>
                         {
                             categories.map(c => <option value={c.name}>{c.name.toLocaleUpperCase()}</option>)
@@ -246,6 +246,15 @@ const HomeTop = styled.div`
         border-radius: 4px;
         font-weight: bold;
     }
+
+    .home__top_categories {
+        display: none;
+
+        @media screen and (max-width:875px){
+            display: flex;
+        }
+    }
+
 `;
 
 

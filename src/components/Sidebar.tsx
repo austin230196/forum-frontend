@@ -144,6 +144,15 @@ const SidebarBodyTop = styled.div`
     padding-block: 50px;
     list-style-type: none;
     border-bottom: 1px solid ${props => props.theme.secondary.dark};
+    margin-right: 20px;
+    order: -1;
+
+    @media screen and (max-width:595px){
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+        padding-block: 20px;
+    }
 
     > li {
         width: 100%;
@@ -199,9 +208,23 @@ const SidebarWrapper = styled.div`
     @media screen and (max-width:875px){
         padding: 15px;
     }
+
+    @media screen and (max-width:595px){
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
 `;
 const SidebarBody = styled.div`
     margin-top: 50px;
+    
+    @media screen and (max-width:595px){
+        display:flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 0px;
+    }
 
     > button {
         width: 100%;

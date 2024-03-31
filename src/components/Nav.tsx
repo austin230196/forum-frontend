@@ -111,6 +111,9 @@ const NavWrapper = styled.nav<{$showLogo: Boolean}>`
     width: 100%;
     gap: 30px;
     padding-block: ${props => props.$showLogo ? '20px' : '40px'};
+    @media screen and (max-width:595px){
+        padding-bottom: 10px;
+    }
 `;
 const NavRight = styled.div`
     display: flex;
