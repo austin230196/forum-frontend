@@ -7,7 +7,7 @@ const QuickLogin = ({}) => (
 )
 
 
-import { AnimatePresence } from "framer-motion";
+// import { AnimatePresence } from "framer-motion";
 
 import LoginTemplate from "./components/LoginTemplate";
 import Backdrop from "../../components/Backdrop";

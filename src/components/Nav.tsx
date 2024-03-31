@@ -62,7 +62,7 @@ const Nav = ({showLogo=false}: INav) => {
 
 
 import styled from "styled-components"
-import { FaBell } from "react-icons/fa";
+// import { FaBell } from "react-icons/fa";
 import { SiGnuprivacyguard } from "react-icons/si";
 import { FiSearch } from "react-icons/fi";
 import { CgProfile } from "react-icons/cg";
@@ -164,25 +164,25 @@ const NavRight = styled.div`
         }
     }
 `;
-const Bell = styled.span`
-    position: relative;
-    cursor: pointer;
+// const Bell = styled.span`
+//     position: relative;
+//     cursor: pointer;
     
-    > span {
-        width: 6px;
-        height: 6px;
-        background-color: red;
-        border-radius: 50%;
-        position: absolute;
-        right: 2px;
-        top: -2px;
-    }
+//     > span {
+//         width: 6px;
+//         height: 6px;
+//         background-color: red;
+//         border-radius: 50%;
+//         position: absolute;
+//         right: 2px;
+//         top: -2px;
+//     }
 
-    > svg {
-        font-size: 1.2rem;
-        color: ${props => props.theme.secondary.light}
-    }
-`;
+//     > svg {
+//         font-size: 1.2rem;
+//         color: ${props => props.theme.secondary.light}
+//     }
+// `;
 
 
 export default Nav;

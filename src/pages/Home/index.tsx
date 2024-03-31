@@ -5,7 +5,7 @@ const Home = () => {
     const [category, setCategory] = useState(!!location.search ? location?.search?.split("=")[1] : "");
     const {data, isLoading, error, isError} = useGetTopics(category ? category as Category : null, order);
     const followMutaion = useFollowTopic();
-    const theme = useTheme();
+    // const theme = useTheme();
 
     useEffect(() => {
         console.log("UPDATED");
@@ -27,7 +27,7 @@ const Home = () => {
     }
 
 
-    async function followTopicHandler(e: any, _id: string){
+    async function followTopicHandler(_: any, _id: string){
         isFollowing.current = true;
         try{
             const res = await followMutaion.mutateAsync({topicId: _id, userId: "65ff59c3978d6b964748d744"});
@@ -45,11 +45,11 @@ const Home = () => {
         <MainLayout>
             <HomeWrapper>
                 <HomeTop>
-                    <select value={order} onChange={ev => setOrder(e => ev.target.value as ('latest' | 'oldest'))}>
+                    <select value={order} onChange={ev => setOrder(_ => ev.target.value as ('latest' | 'oldest'))}>
                         <option value="latest">Latest</option>
                         <option value="oldest">Oldest</option>
                     </select>
-                    <select value={category} onChange={ev => setCategory(e => ev.target.value as ('latest' | 'oldest'))}>
+                    <select value={category} onChange={ev => setCategory(_ => ev.target.value as ('latest' | 'oldest'))}>
                         <option value="">All</option>
                         {
                             categories.map(c => <option value={c.name}>{c.name.toLocaleUpperCase()}</option>)
@@ -107,7 +107,7 @@ const Home = () => {
 
 
 
-import styled, { useTheme } from "styled-components";
+import styled from "styled-components";
 import {motion} from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FaComment, FaStar } from "react-icons/fa";
@@ -121,7 +121,7 @@ import { useGetTopics } from "../../store/queries/topic";
 import { useFollowTopic } from "../../store/mutations/topic";
 import { useLocation } from "react-router-dom";
 import Category from "../../types/Category";
-import Loader from "../../components/Loader";
+// import Loader from "../../components/Loader";
 
 
 const TopicContent = styled.section`

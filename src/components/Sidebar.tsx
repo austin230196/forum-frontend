@@ -57,7 +57,7 @@ const Sidebar = () => {
 import styled from "styled-components"
 import { IoIosChatbubbles } from "react-icons/io";
 import { FaStar } from "react-icons/fa";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import {NavLink} from "react-router-dom";
 import { IoCreate } from "react-icons/io5";

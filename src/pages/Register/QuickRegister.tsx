@@ -7,7 +7,7 @@ const QuickRegister = ({}) => (
 )
 
 
-import { AnimatePresence } from "framer-motion";
+// import { AnimatePresence } from "framer-motion";
 
 import Backdrop from "../../components/Backdrop";
 import RegisterTemplate from "./components/RegisterTemplate";
