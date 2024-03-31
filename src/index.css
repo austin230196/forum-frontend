@@ -1,0 +1,14 @@
+*, *::before, *::after {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  font-family: 'Courier New', Courier, monospace;
+  transition: all 0.6s ease-out;
+}
+
+
+body, html {
+  width: 100vw;
+  min-height: 100vh;
+}
