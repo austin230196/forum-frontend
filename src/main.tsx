@@ -10,6 +10,7 @@ import router from './router.ts';
 import './index.css'
 import theme from './theme.ts'
 import GlobalContextProvider from './contexts/GlobalContext.tsx';
+import SuspenseLoader from './components/SuspenseLoader.tsx';
 
 
 const queryClient = new QueryClient({
@@ -37,15 +38,9 @@ root.render(
         />
         <QueryClientProvider client={queryClient}>
           <Suspense 
-          fallback={
-            <div>
-              LOADING!!!
-            </div>
-            // <NotFound animationData={animationData}>
-            //   <button>Back Home</button>
-            // </NotFound>
-          }>
-          <RouterProvider router={router} />
+            fallback={<SuspenseLoader />}
+          >
+            <RouterProvider router={router} />
           </Suspense>
         </QueryClientProvider>
       </ThemeProvider>

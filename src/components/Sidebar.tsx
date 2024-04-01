@@ -17,22 +17,28 @@ const Sidebar = () => {
             }
             <Logo />
             <SidebarBody>
-                <button onClick={showStartDiscussion}>
-                    <pre><IoCreate /></pre>
-                    <span>Start new Discussion</span>
-                </button>
+                <Tooltip title="Start new discussion">
+                    <button onClick={showStartDiscussion}>
+                        <pre><IoCreate /></pre>
+                        <span>Start new Discussion</span>
+                    </button>
+                </Tooltip>
                 <SidebarBodyTop>
                     <li>
-                        <NavLink to="/">
-                        <pre><IoIosChatbubbles /></pre>
-                        <span>All discussions</span>
-                        </NavLink>
+                        <Tooltip title="All discussions">
+                            <NavLink to="/">
+                            <pre><IoIosChatbubbles /></pre>
+                            <span>All discussions</span>
+                            </NavLink>
+                        </Tooltip>
                     </li>
                     <li>
-                        <NavLink to="/follow">
-                        <pre><FaStar /></pre>
-                        <span>Following</span>
-                        </NavLink>
+                        <Tooltip title="Following topics">
+                            <NavLink to="/follow">
+                            <pre><FaStar /></pre>
+                            <span>Following</span>
+                            </NavLink>
+                        </Tooltip>
                     </li>
                 </SidebarBodyTop>
                 <SidebarBodyMain>
@@ -59,6 +65,7 @@ import { IoIosChatbubbles } from "react-icons/io";
 import { FaStar } from "react-icons/fa";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
+import {Tooltip} from "@mui/material";
 import {NavLink} from "react-router-dom";
 import { IoCreate } from "react-icons/io5";
 

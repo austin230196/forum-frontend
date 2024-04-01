@@ -18,3 +18,12 @@ export const login = async (data: ILogin) => {
         }
     }))
 }
+
+
+export const forgotPassword = async (email: string) => {
+    return (await axios.post("/user/forgot-password", JSON.stringify({email}), {
+        headers: {
+            "Content-Type": "application/json"
+        }
+    }))
+}

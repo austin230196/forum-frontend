@@ -1,4 +1,4 @@
-const AnimationLayout = ({children, animationData=data}: {children: ReactNode, animationData?: any}) => {
+const AnimationLayout = ({children, animationData=data, height}: {children: ReactNode, animationData?: any}) => {
     // const defaultOptions = {
 
     //     rendererSettings: {
@@ -6,12 +6,15 @@ const AnimationLayout = ({children, animationData=data}: {children: ReactNode, a
     //     }
     // }
     return (
-        <AnimationLayoutWrapper>
+        <AnimationLayoutWrapper
+            $height={height}
+        >
             <AnimationLayoutAnimation
                 play
-                loop={true}
+                loop={false}
                 animationData={animationData}
                 style={{height: '600px', width: "100%"}}
+                // rendererSettings={{ preserveAspectRatio: 'xMidYMid slice' }}
             />
             <AnimationLayoutAction>
                 {children}
@@ -33,11 +36,12 @@ import * as data from "../assets/lottie/programmable-forum-felicitation.json";
 
 
 
-const AnimationLayoutWrapper = styled.div`
+const AnimationLayoutWrapper = styled.div<{$height: number}>`
     width: min(100%-0.25rem, 600px);
     max-width: 1200px;
     margin-inline: auto;
     display: flex;
+    // height: ${props => props.$height ? props.$height + 'px' : '100%'}
     flex-direction: column;
     align-items: center;
     gap: 100px;

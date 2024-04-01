@@ -13,7 +13,7 @@ const Nav = ({showLogo=false}: INav) => {
         })
         setTimeout(() => {
             navigate("/login");
-        }, 3000);
+        }, 1000);
     }
 
     return (
@@ -113,6 +113,7 @@ const NavWrapper = styled.nav<{$showLogo: Boolean}>`
     padding-block: ${props => props.$showLogo ? '20px' : '40px'};
     @media screen and (max-width:595px){
         padding-bottom: 10px;
+        padding-top: 20px;
     }
 `;
 const NavRight = styled.div`
@@ -131,6 +132,7 @@ const NavRight = styled.div`
             box-shadow: 0px 2px 5px #ccc;
             list-style-type: none;
             border-radius: 8px;
+            z-index: 101;
             
             > li {
                 cursor: pointer;

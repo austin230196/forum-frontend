@@ -73,7 +73,7 @@ const RegisterTemplate = ({canClose=true}: IRegisterTemplate) => {
             toast(data.message);
             //welcome page
             navigate("/user/welcome");
-            showLoginHandler();
+            // showLoginHandler();
         }catch(e: any){
             toast(e.message, {type: 'error'});
         }finally{
@@ -148,9 +148,9 @@ const RegisterTemplateWrapper = styled(motion.div)`
     background-color: ${props => props.theme.secondary.main};
     width: min(100% - 0.5rem, 500px);
     margin-inline: auto;
-    margin-top: 200px;
     padding: 20px;
     border-radius: 8px;
+    margin-top: 200px;
     position: relative;
     box-shadow: 0px 2px 5px #ccc;
     display:flex;
@@ -227,12 +227,12 @@ const RegisterForm = styled(motion.div)`
         display: flex;
         align-items: center;
         gap: 10px;
-        font-size: 0.8rem;
+        font-size: 0.9rem;
 
         > a {
             color: ${props => props.theme.primary.main};
             text-decoration: none;
-            font-size: 0.8rem;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
         }

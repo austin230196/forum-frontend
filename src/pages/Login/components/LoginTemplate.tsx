@@ -102,7 +102,14 @@ const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
                     <input type="password" style={{borderColor: feedback["password"] ? 'red' : ''}} value={formstate.password} onChange={changeHandler} name="password" placeholder="Enter your password" />
                     {feedback["password"] && <motion.i initial={{opacity: 0, x: -100}} transition={{stiffness: 0.5}} animate={{opacity: 1, x:0}} exit={{opacity: 0, x: -100}}><MdInfo /> {feedback["password"]}</motion.i>}
                 </div>
-                <motion.p whileHover={{scale: 1.01}}><span>Don't have an account? <a onClick={showRegisterHandler}>Register</a></span> <NavLink to="#">Forgot password</NavLink></motion.p>
+                <motion.p whileHover={{scale: 1.01}}><span>Don't have an account? <a onClick={showRegisterHandler}>Register</a></span> <NavLink to="/forgot-password">Forgot password</NavLink></motion.p>
+                <aside id="social__auth">
+                    <p>or login with</p>
+                    <div>
+                        <GoogleButton />
+                        <GithubButton />
+                    </div>
+                </aside>
                 <section>
                     <motion.button
                     onClick={loginUserHandler}
@@ -135,6 +142,8 @@ import Loader from "../../../components/Loader";
 import { useLoginUser } from "../../../store/mutations/user";
 import { useGlobalContext } from "../../../contexts/GlobalContext";
 import { LOGIN } from "../../../contexts/actions";
+import GoogleButton from "./GoogleButton";
+import GithubButton from "./GithubButton";
 
 
 
@@ -173,6 +182,24 @@ const LoginForm = styled(motion.div)`
     width: 100%;
     gap: 20px;
     margin-top: 40px;
+
+    >#social__auth {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+
+        > p {
+            font-size: 0.8rem;
+        }
+
+        > div {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+    }
 
     > div {
         width: 100%;
@@ -224,14 +251,13 @@ const LoginForm = styled(motion.div)`
     > p {
         width:100%;
         display: flex;
+        flex-direction: column;
         align-items: flex-start;
-        gap: 30px;
-        justify-content: space-between;
+        gap: 8px;
 
         >span {
             font-size: 0.9rem;
             display: flex;
-            flex-direction: column;
             gap: 5px;
             > a {
                 color: ${props => props.theme.primary.main};
@@ -239,13 +265,14 @@ const LoginForm = styled(motion.div)`
                 font-size: 0.8rem;
                 font-weight: 600;
                 cursor: pointer;
+                font-size: 1rem;
             }
         }
 
         > a {
             color: ${props => props.theme.primary.main};
             text-decoration: none;
-            font-size: 0.8rem;
+            font-size: 1rem;
             font-weight: 600;
         }
     }

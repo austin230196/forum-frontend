@@ -1,6 +1,6 @@
 import {useMutation} from "@tanstack/react-query";
 import { ILogin, IRegister } from "../../types/User";
-import { login, register } from "../apis/user";
+import { forgotPassword, login, register } from "../apis/user";
 
 
 
@@ -16,5 +16,13 @@ export const useLoginUser = () => {
     return useMutation({
         mutationFn: (data: ILogin) => login(data),
         mutationKey: ["loginUser"]
+    })
+}
+
+
+export const useForgotPassword = () => {
+    return useMutation({
+        mutationFn: (email: string) => forgotPassword(email),
+        mutationKey:["forgotPassword"]
     })
 }

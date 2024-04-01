@@ -1,5 +1,8 @@
 const CreateForum = ({closeModal}: ICreateForum) => {
     const isCreating = useRef(false);
+    const flag = useRef(true);
+    const {isAuth} = useGlobalContext();
+    const navigate = useNavigate();
     const [formstate, setFormstate] = useState({
         title: '',
         category: '',
@@ -11,6 +14,19 @@ const CreateForum = ({closeModal}: ICreateForum) => {
         message: ''
     })
     const topicCreator = useCreateTopic();
+
+    useEffect(() => {
+        if(flag.current && !isAuth){
+            setTimeout(async () => {
+                await showLoginHandler()
+            }, 2000);
+            flag.current = false;
+        }
+    }, [])
+
+    function showLoginHandler(){
+        document.getElementById("login__backdrop")!.style.display = 'block';
+    }
 
     function changeHandler(e: ChangeEvent<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>): void{
         const {name, value} = e.target;
@@ -44,6 +60,7 @@ const CreateForum = ({closeModal}: ICreateForum) => {
     async function createTopicHandler(){
         isCreating.current = true;
         try{
+            if(!isAuth) navigate("/login");
             const res = await topicCreator.mutateAsync({...formstate, category: formstate.category as Category});
             console.log({res});
             const data = await res.data;
@@ -108,7 +125,7 @@ const CreateForum = ({closeModal}: ICreateForum) => {
 
 import styled from "styled-components";
 import {motion} from "framer-motion";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { MdClear, MdInfo } from "react-icons/md";
 import {toast} from "react-toastify";
 
@@ -119,6 +136,8 @@ import Regex from "../../utils/Regex";
 import { categories } from "../../components/Sidebar";
 import Category from "../../types/Category";
 import { useCreateTopic } from "../../store/mutations/topic";
+import { useGlobalContext } from "../../contexts/GlobalContext";
+import { useNavigate } from "react-router-dom";
 
 
 type ICreateForum = {
@@ -201,7 +220,7 @@ const CreateForumWrapper = styled(motion.div)`
     background-color: ${props => props.theme.secondary.main};
     width: min(100% - 0.5rem, 500px);
     margin-inline: auto;
-    margin-top: 200px;
+    margin-top: 100px;
     padding: 20px;
     border-radius: 8px;
     position: relative;

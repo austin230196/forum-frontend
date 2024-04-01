@@ -60,7 +60,7 @@ const Home = () => {
                 transition={{staggerChildren: 1}}
                 >
                     {
-                        isLoading ? <div>Loading</div> : 
+                        isLoading ? <SuspenseLoader /> : 
                         isError ? <div>{error.message}</div> :
                         topics?.length ? 
                         topics?.map(({message, title, category, creator, createdAt, replies, _id}: any, i: number) => (
@@ -121,6 +121,7 @@ import { useGetTopics } from "../../store/queries/topic";
 import { useFollowTopic } from "../../store/mutations/topic";
 import { useLocation } from "react-router-dom";
 import Category from "../../types/Category";
+import SuspenseLoader from "../../components/SuspenseLoader";
 // import Loader from "../../components/Loader";
 
 
