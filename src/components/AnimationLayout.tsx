@@ -1,4 +1,4 @@
-const AnimationLayout = ({children, animationData=data, height}: {children: ReactNode, animationData?: any}) => {
+const AnimationLayout = ({children, animationData=data, height}: {children: ReactNode, animationData?: any, height?: number}) => {
     // const defaultOptions = {
 
     //     rendererSettings: {
@@ -7,7 +7,7 @@ const AnimationLayout = ({children, animationData=data, height}: {children: Reac
     // }
     return (
         <AnimationLayoutWrapper
-            $height={height}
+            $height={height || 500}
         >
             <AnimationLayoutAnimation
                 play

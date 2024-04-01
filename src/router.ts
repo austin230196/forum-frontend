@@ -3,7 +3,7 @@ import {createBrowserRouter} from "react-router-dom";
 
 
 const Home = lazy(() => import("./pages/Home"));
-const Details = lazy(() => import("./pages/Details"));
+// const Details = lazy(() => import("./pages/Details"));
 const Login = lazy(() => import("./pages/Login"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const Register = lazy(() => import("./pages/Register"));

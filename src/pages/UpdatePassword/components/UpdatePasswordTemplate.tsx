@@ -1,7 +1,7 @@
 const UpdatePasswordTemplate = () => {
     const isSubmitting = useRef(false);
     const navigate = useNavigate();
-    const {dispatch} = useGlobalContext();
+    // const {dispatch} = useGlobalContext();
     const [email, setEmail] = useState("");
     const [feedback, setFeedback] = useState<string|null>(null);
     const forgotPassword = useForgotPassword();
@@ -80,14 +80,14 @@ const UpdatePasswordTemplate = () => {
 import styled from "styled-components";
 import {motion} from "framer-motion";
 import { MdInfo } from "react-icons/md";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ChangeEvent, useRef, useState } from "react";
 import {toast} from "react-toastify";
 
 import Logo from "../../../components/Logo";
 import Regex from "../../../utils/Regex";
 import Loader from "../../../components/Loader";
-import { useGlobalContext } from "../../../contexts/GlobalContext";
+// import { useGlobalContext } from "../../../contexts/GlobalContext";
 import { useForgotPassword } from "../../../store/mutations/user";
 
 
