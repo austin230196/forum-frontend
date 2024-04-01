@@ -36,7 +36,15 @@ root.render(
           transition={Bounce}
         />
         <QueryClientProvider client={queryClient}>
-          <Suspense fallback={<div>LOADING</div>}>
+          <Suspense 
+          fallback={
+            <div>
+              LOADING!!!
+            </div>
+            // <NotFound animationData={animationData}>
+            //   <button>Back Home</button>
+            // </NotFound>
+          }>
           <RouterProvider router={router} />
           </Suspense>
         </QueryClientProvider>

@@ -7,6 +7,8 @@ const Details = lazy(() => import("./pages/Details"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const Profile = lazy(() => import("./pages/Profile"));
+const UserWelcome = lazy(() => import("./pages/UserWelcome"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 
 const router = createBrowserRouter([
@@ -30,9 +32,19 @@ const router = createBrowserRouter([
         Component: Profile,
         children: []
     },
+    // {
+    //     path: "/:id",
+    //     Component: Details,
+    //     children: []
+    // },
     {
-        path: "/:id",
-        Component: Details,
+        path: "/user/welcome",
+        Component: UserWelcome,
+        children: []
+    },
+    {
+        path: "*",
+        Component: NotFound,
         children: []
     },
 ]);

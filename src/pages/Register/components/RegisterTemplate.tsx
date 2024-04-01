@@ -71,6 +71,8 @@ const RegisterTemplate = ({canClose=true}: IRegisterTemplate) => {
             const data = await res.data;
             if(!data.success) throw new Error(data.message);
             toast(data.message);
+            //welcome page
+            navigate("/user/welcome");
             showLoginHandler();
         }catch(e: any){
             toast(e.message, {type: 'error'});

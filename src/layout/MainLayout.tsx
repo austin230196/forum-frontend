@@ -51,6 +51,7 @@ const MainLayoutBody = styled.div`
     height: 100vh;
     overflow-y: hidden;
     max-width: 1200px;
+    margin-inline: auto;
     padding-inline: 20px;
     padding-bottom: 200px;
 `;
