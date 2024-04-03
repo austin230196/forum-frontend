@@ -27,3 +27,12 @@ export const forgotPassword = async (email: string) => {
         }
     }))
 }
+
+
+export const socialLogin = async(provider: 'google'|'github') => {
+    return (await axios.get(`/user/login/${provider}`));
+}
+
+export const loginSocialUser = async(provider: 'google'|'github', code: string) => {
+    return (await axios.post(`/user/login/${provider}/callback`, {code}));
+}

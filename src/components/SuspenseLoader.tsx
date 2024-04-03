@@ -2,6 +2,7 @@ const SuspenseLoader = () => {
     return (
         <AnimationLayout
         animationData={loading}
+        loop={true}
         >
             {null}
         </AnimationLayout>

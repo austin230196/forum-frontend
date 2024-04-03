@@ -52,7 +52,7 @@ const Home = () => {
                     <select className="home__top_categories" value={category} onChange={ev => setCategory(_ => ev.target.value as ('latest' | 'oldest'))}>
                         <option value="">All</option>
                         {
-                            categories.map(c => <option value={c.name}>{c.name.toLocaleUpperCase()}</option>)
+                            categories.map((c, i) => <option value={c.name} key={i}>{c.name.toLocaleUpperCase()}</option>)
                         }
                     </select>
                 </HomeTop>

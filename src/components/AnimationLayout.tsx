@@ -1,4 +1,4 @@
-const AnimationLayout = ({children, animationData=data, height}: {children: ReactNode, animationData?: any, height?: number}) => {
+const AnimationLayout = ({children, animationData=data, height, loop}: {children: ReactNode, animationData?: any, height?: number, loop?: boolean}) => {
     // const defaultOptions = {
 
     //     rendererSettings: {
@@ -11,7 +11,7 @@ const AnimationLayout = ({children, animationData=data, height}: {children: Reac
         >
             <AnimationLayoutAnimation
                 play
-                loop={false}
+                loop={loop ? loop : false}
                 animationData={animationData}
                 style={{height: '600px', width: "100%"}}
                 // rendererSettings={{ preserveAspectRatio: 'xMidYMid slice' }}

@@ -1,6 +1,15 @@
 const GithubButton = () => {
+    const {data} = useSocialLogin('github');
+    async function socialLoginHandler(){
+        const res = data?.data;
+        console.log({res});
+        const {url} = res.data;
+        console.log({url});
+        window.localStorage.setItem(SOCIAL_AUTH_PROVIDER, 'github');
+        window.location.href = url;
+    }
     return (
-        <WGitHubButton>
+        <WGitHubButton onClick={socialLoginHandler}>
             <FaGithub />
             <span>Github</span>
         </WGitHubButton>
@@ -12,6 +21,8 @@ const GithubButton = () => {
 import styled from "styled-components";
 import { motion } from "framer-motion"
 import { FaGithub } from "react-icons/fa";
+import { useSocialLogin } from "../../../store/queries/user";
+import { SOCIAL_AUTH_PROVIDER } from "../../../constants";
 
 const WGitHubButton = styled(motion.button)`
     background-color: ${props => props.theme.secondary.main};

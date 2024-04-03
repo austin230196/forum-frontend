@@ -1,7 +1,7 @@
 const Subscribe = () => {
     return (
         <SubscribeWrapper>
-
+            
         </SubscribeWrapper>
     )
 }

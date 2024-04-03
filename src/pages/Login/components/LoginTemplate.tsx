@@ -1,8 +1,11 @@
 const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
     const isSubmitting = useRef(false);
+    const flag = useRef(true);
     const login = useLoginUser();
     const navigate = useNavigate();
+    const location = useLocation();
     const {dispatch} = useGlobalContext();
+    const socialLogin = useLoginSocialUser();
     const [formstate, setFormstate] = useState({
         email: "",
         password: ""
@@ -11,6 +14,25 @@ const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
         email: "",
         password: ""
     })
+
+    useEffect(() => {
+        if(flag.current){
+            const code = location.search.split("=")[1];
+            console.log({code});
+            if(code){
+                const provider = window.localStorage.getItem(SOCIAL_AUTH_PROVIDER) as 'github' | 'google';
+                socialLogin.mutateAsync({provider, code})
+                .then(async data => {
+                    console.log({data});
+                    const res = data.data;
+                    await loginUser(res);
+                    window.localStorage.removeItem(SOCIAL_AUTH_PROVIDER);
+                })
+                .catch(e => console.error({e}))
+            }
+            flag.current = false;
+        }
+    }, [])
 
     function changeHandler(e: ChangeEvent<HTMLInputElement>): void{
         const {name, value} = e.target;
@@ -52,26 +74,30 @@ const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
             console.log({res});
             let data: {message: string, success: boolean, data?: any} = await res.data;
             if(!data.success) throw new Error(data.message);
-            const userdata = data.data;
-            dispatch({
-                type: LOGIN,
-                payload: {
-                    userdata: userdata?.user,
-                    refreshKey: userdata?.refreshToken,
-                    accessKey: userdata?.accessToken
-                }
-            })
-            if(canClose){
-                closeModal();
-            }else {
-                navigate("/");
-            }
-            toast(data.message, {});
+            await loginUser(data);
         }catch(e: any){
             toast(e.message, {type: 'error'});
         }finally {
             isSubmitting.current = false;
         }
+    }
+
+    async function loginUser(data: any){
+        const userdata = data.data;
+        dispatch({
+            type: LOGIN,
+            payload: {
+                userdata: userdata?.user,
+                refreshKey: userdata?.refreshToken,
+                accessKey: userdata?.accessToken
+            }
+        })
+        if(canClose){
+            closeModal();
+        }else {
+            navigate("/");
+        }
+        toast(data.message, {});
     }
 
     function showRegisterHandler(){
@@ -132,18 +158,19 @@ const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
 import styled from "styled-components";
 import {motion} from "framer-motion";
 import { MdClear, MdInfo } from "react-icons/md";
-import { NavLink, useNavigate } from "react-router-dom";
-import { ChangeEvent, useRef, useState } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import {toast} from "react-toastify";
 
 import Logo from "../../../components/Logo";
 import Regex from "../../../utils/Regex";
 import Loader from "../../../components/Loader";
-import { useLoginUser } from "../../../store/mutations/user";
+import { useLoginSocialUser, useLoginUser } from "../../../store/mutations/user";
 import { useGlobalContext } from "../../../contexts/GlobalContext";
 import { LOGIN } from "../../../contexts/actions";
 import GoogleButton from "./GoogleButton";
 import GithubButton from "./GithubButton";
+import { SOCIAL_AUTH_PROVIDER } from "../../../constants";
 
 
 
