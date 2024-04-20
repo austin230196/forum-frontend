@@ -1,6 +1,6 @@
 const Nav = ({showLogo=false}: INav) => {
     const [showDropdown, setShowDropDown] = useState(false);
-    const {dispatch, isAuth} = useGlobalContext();
+    const {dispatch, isAuth, userdata} = useGlobalContext();
     const navigate = useNavigate();
 
     function toggleDropdown(){
@@ -31,7 +31,7 @@ const Nav = ({showLogo=false}: INav) => {
                     <FaBell />
                 </Bell> */}
                 <span onClick={toggleDropdown}>
-                    <Avatar width={40} height={40} />
+                    <Avatar width={40} height={40} image={userdata?.avatar!} />
                     {
                         showDropdown ? 
                         (

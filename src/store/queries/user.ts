@@ -4,9 +4,19 @@ import { socialLogin } from "../apis/user"
 
 
 
-export const useSocialLogin = (provider: 'google' | 'github') => {
+export const useGoogleLogin = () => {
     return useQuery({
-        queryKey: ["socialLogin"],
-        queryFn: async() => await socialLogin(provider),
+        queryKey: ["google-login"],
+        queryFn: async() => await socialLogin("google"),
     })
 }
+
+
+export const useGithubLogin = () => {
+    return useQuery({
+        queryKey: ["github-login"],
+        queryFn: async() => await socialLogin("github"),
+    })
+}
+
+

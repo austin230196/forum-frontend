@@ -2,7 +2,7 @@ const Home = () => {
     const [order, setOrder] = useState<'latest'|'oldest'>('latest');
     const location = useLocation();
     const isFollowing = useRef(false);
-    const [category, setCategory] = useState(!!location.search ? location?.search?.split("=")[1] : "");
+    const [category, setCategory] = useState(!!location.search ? (new URLSearchParams(location?.search)).get("category") : "");
     const {data, isLoading, error, isError} = useGetTopics(category ? category as Category : null, order);
     const followMutaion = useFollowTopic();
     // const theme = useTheme();
@@ -49,7 +49,7 @@ const Home = () => {
                         <option value="latest">Latest</option>
                         <option value="oldest">Oldest</option>
                     </select>
-                    <select className="home__top_categories" value={category} onChange={ev => setCategory(_ => ev.target.value as ('latest' | 'oldest'))}>
+                    <select className="home__top_categories" value={category!} onChange={ev => setCategory(_ => ev.target.value as ('latest' | 'oldest'))}>
                         <option value="">All</option>
                         {
                             categories.map((c, i) => <option value={c.name} key={i}>{c.name.toLocaleUpperCase()}</option>)

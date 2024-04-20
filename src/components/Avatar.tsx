@@ -1,6 +1,6 @@
-const Avatar = ({width, height, onClick}: IAvatar) => {
+const Avatar = ({width, height, onClick, image}: IAvatar) => {
     return (
-        <AvatarImage onClick={onClick} src={avatar} alt="Avatar" $width={width} $height={height} />
+        <AvatarImage onClick={onClick} src={image ? image :avatar} alt="Avatar" $width={width} $height={height} />
     )
 }
 
@@ -8,7 +8,8 @@ const Avatar = ({width, height, onClick}: IAvatar) => {
 interface IAvatar {
     width: number,
     height: number,
-    onClick?: MouseEventHandler<HTMLImageElement>
+    onClick?: MouseEventHandler<HTMLImageElement>,
+    image?: string
 }
 
 

@@ -1,6 +1,13 @@
 const GoogleButton = () => {
+    const {data} = useGoogleLogin();
+    async function socialLoginHandler(){
+        const res = data?.data;
+        const url = res?.data?.url;
+        window.localStorage.setItem(SOCIAL_AUTH_PROVIDER, 'google');
+        window.location.href = url;
+    }
     return (
-        <WGoogleButton>
+        <WGoogleButton onClick={socialLoginHandler}>
             <FaGoogle />
             <span>Google</span>
         </WGoogleButton>
@@ -12,6 +19,9 @@ const GoogleButton = () => {
 import styled from "styled-components";
 import { motion } from "framer-motion"
 import { FaGoogle } from "react-icons/fa";
+
+import { useGoogleLogin } from "../../../store/queries/user";
+import { SOCIAL_AUTH_PROVIDER } from "../../../constants";
 
 const WGoogleButton = styled(motion.button)`
     background-color: ${props => props.theme.secondary.main};

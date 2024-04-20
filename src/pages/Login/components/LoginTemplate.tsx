@@ -17,9 +17,17 @@ const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
 
     useEffect(() => {
         if(flag.current){
-            const code = location.search.split("=")[1];
+            const urlParams = new URLSearchParams(location.search);
+            const paramProxy = new Proxy(urlParams, {
+                get: (target, prop) => target.get(prop as string)
+            })
+            const code = urlParams.get("code");
             console.log({code});
             if(code){
+                if(code === 'redirect_uri_mismatch&error_description'){
+                    console.log("REDIRECT URI MISMATCH");
+                    navigate("/");
+                }
                 const provider = window.localStorage.getItem(SOCIAL_AUTH_PROVIDER) as 'github' | 'google';
                 socialLogin.mutateAsync({provider, code})
                 .then(async data => {
