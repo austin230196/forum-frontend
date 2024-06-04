@@ -59,7 +59,7 @@ const MainLayoutContent = styled.div`
     width: 100%;
     height: 100%;
     overflow-y: scroll;
-    margin-top: 50px;
+    margin-top: 10px;
 
     &::-webkit-scrollbar {
         /* Hide scrollbar for Chrome, Safari and Opera */

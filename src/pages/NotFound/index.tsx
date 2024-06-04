@@ -6,9 +6,6 @@ const NotFound = () => {
             >
                 <CustomNavLink
                 to="/"
-                //   drag
-                //   dragConstraints={{ left: 0, right: 300 }}
-                //   dragMomentum={false}
                 >
                     Back Home
                 </CustomNavLink>
@@ -20,7 +17,6 @@ const NotFound = () => {
 
 
 import styled from "styled-components"
-// import {motion} from "framer-motion";
 
 import AnimationLayout from "../../components/AnimationLayout";
 

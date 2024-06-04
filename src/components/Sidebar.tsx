@@ -220,6 +220,7 @@ const SidebarWrapper = styled.div`
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
+        padding: 5px 10px;
     }
 `;
 const SidebarBody = styled.div`
@@ -237,7 +238,7 @@ const SidebarBody = styled.div`
         width: 100%;
         background-color: ${props => props.theme.primary.main};
         border: none;
-        padding: 10px;
+        padding: 5px;
         border-radius: 4px;
         color: #fff;
         font-weight: 500;
@@ -263,7 +264,7 @@ const SidebarBody = styled.div`
 
             > pre {
                 display: block;
-                font-size: 2rem;
+                font-size: 1.5rem;
             }
         }
     }

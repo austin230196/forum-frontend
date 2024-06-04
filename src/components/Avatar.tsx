@@ -16,7 +16,7 @@ interface IAvatar {
 import styled from "styled-components"
 import { MouseEventHandler } from "react";
 
-import avatar from "../assets/avatar.jpeg";
+import avatar from "../assets/images/avatar.jpeg";
 
 const AvatarImage = styled.img<{$width: number, $height: number}>`
     width: ${props => props.$width}px;

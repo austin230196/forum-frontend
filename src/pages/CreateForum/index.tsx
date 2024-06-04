@@ -1,7 +1,10 @@
 const CreateForum = ({closeModal}: ICreateForum) => {
     const isCreating = useRef(false);
     const flag = useRef(true);
-    const {isAuth} = useGlobalContext();
+    const store = useGlobalContext();
+    console.log({store});
+    const userdata = useStore(store as StoreApi<GlobalState>, (s) => s?.userdata);
+    console.log({userdata});
     const navigate = useNavigate();
     const [formstate, setFormstate] = useState({
         title: '',
@@ -16,13 +19,13 @@ const CreateForum = ({closeModal}: ICreateForum) => {
     const topicCreator = useCreateTopic();
 
     useEffect(() => {
-        if(flag.current && !isAuth){
+        if(flag.current && !userdata){
             setTimeout(async () => {
                 await showLoginHandler()
             }, 2000);
             flag.current = false;
         }
-    }, [])
+    }, [userdata])
 
     function showLoginHandler(){
         document.getElementById("login__backdrop")!.style.display = 'block';
@@ -60,7 +63,7 @@ const CreateForum = ({closeModal}: ICreateForum) => {
     async function createTopicHandler(){
         isCreating.current = true;
         try{
-            if(!isAuth) navigate("/login");
+            if(!userdata) navigate("/login");
             const res = await topicCreator.mutateAsync({...formstate, category: formstate.category as Category});
             console.log({res});
             const data = await res.data;
@@ -77,9 +80,9 @@ const CreateForum = ({closeModal}: ICreateForum) => {
     return (
         <Backdrop>
             <CreateForumWrapper>
-                <motion.span whileHover={{scale: 1.2, color: 'red'}} transition={{duration: 0.8, type: 'tween'}}>
+                <span>
                     <MdClear onClick={closeModal} />
-                </motion.span>
+                </span>
                 <CreateForumTop>
                     <Logo />
                 </CreateForumTop>
@@ -87,7 +90,7 @@ const CreateForum = ({closeModal}: ICreateForum) => {
                     <div>
                         <label>Title</label>
                         <input type="title" style={{borderColor: feedback["title"] ? 'red' : ''}} value={formstate.title} onChange={changeHandler} name="title" placeholder="What's the title" />
-                        {feedback["title"] && <motion.i initial={{opacity: 0, x: -100}} transition={{stiffness: 0.5}} exit={{opacity: 0, x: -100}} animate={{opacity: 1, x:0}}><MdInfo /> {feedback["title"]}</motion.i>}
+                        {feedback["title"] && <i><MdInfo /> {feedback["title"]}</i>}
                     </div>
                     <div>
                         <label>Category</label>
@@ -101,19 +104,17 @@ const CreateForum = ({closeModal}: ICreateForum) => {
                     <div>
                         <label>Message</label>
                         <textarea rows={5} style={{borderColor: feedback["message"] ? 'red' : ''}} value={formstate.message} onChange={changeHandler} name="message" placeholder="Enter your message" />
-                        {feedback["message"] && <motion.i initial={{opacity: 0, x: -100}} transition={{stiffness: 0.5}} animate={{opacity: 1, x:0}} exit={{opacity: 0, x: -100}}><MdInfo /> {feedback["message"]}</motion.i>}
+                        {feedback["message"] && <i><MdInfo /> {feedback["message"]}</i>}
                     </div>
                     <section>
-                        <motion.button
+                        <button
                         onClick={createTopicHandler}
-                        whileHover={{scale: 1.1}}
-                        transition={{stiffness: 0.5, type:'inertia'}}
                         disabled={!!feedback.message || !!feedback.category || !!feedback.title || isCreating.current}
                         >
                             {
-                                isCreating.current ? <Loader /> : <span>Create Discussion</span>
+                                isCreating.current ? <CircularLoader size={20} /> : <span>Create Discussion</span>
                             }
-                        </motion.button>
+                        </button>
                     </section>
                 </CreateForumForm>
             </CreateForumWrapper>
@@ -124,20 +125,21 @@ const CreateForum = ({closeModal}: ICreateForum) => {
 
 
 import styled from "styled-components";
-import {motion} from "framer-motion";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { MdClear, MdInfo } from "react-icons/md";
 import {toast} from "react-toastify";
 
 import Backdrop from "../../components/Backdrop";
 import Logo from "../../components/Logo";
-import Loader from "../../components/Loader";
+import {CircularLoader} from "../../components";
 import Regex from "../../utils/Regex";
 import { categories } from "../../components/Sidebar";
 import Category from "../../types/Category";
 import { useCreateTopic } from "../../store/mutations/topic";
 import { useGlobalContext } from "../../contexts/GlobalContext";
 import { useNavigate } from "react-router-dom";
+import { StoreApi, useStore } from "zustand";
+import { GlobalState } from "../../contexts/store";
 
 
 type ICreateForum = {
@@ -216,7 +218,7 @@ const CreateForumForm = styled.div`
         }
     }
 `;
-const CreateForumWrapper = styled(motion.div)`
+const CreateForumWrapper = styled.div`
     background-color: ${props => props.theme.secondary.main};
     width: min(100% - 0.5rem, 500px);
     margin-inline: auto;
@@ -238,7 +240,7 @@ const CreateForumWrapper = styled(motion.div)`
     }
 `;
 
-const CreateForumTop = styled(motion.div)``;
+const CreateForumTop = styled.div``;
 
 
 export default CreateForum;

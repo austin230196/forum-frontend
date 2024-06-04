@@ -1,11 +1,11 @@
-const CSwitch = () => {
+const CSwitch = (props: SwitchProps) => {
     return (
         <SwitchWrapper>
-            <CustomSwitch />
+            <CustomSwitch {...props} />
         </SwitchWrapper>
     )
 }
-import {Switch} from "@mui/material"
+import {Switch, SwitchProps} from "@mui/material"
 import styled from "styled-components";
 
 

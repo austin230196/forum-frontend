@@ -32,6 +32,17 @@ const LogoWrapper = styled(NavLink)`
             right: -15px;
         }
     }
+
+    @media screen and (max-width:875px){
+        > p {
+            font-size: 2.5rem;
+    
+            > b {
+                top: 15px;
+                right: -8px;
+            }
+        }
+    }
 `;
 
 

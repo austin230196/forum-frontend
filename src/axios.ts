@@ -10,12 +10,12 @@ const instance = axios.create({
 
 
 instance.interceptors.response.use(async (res: AxiosResponse) => {
-    if(res.data?.message === 'jwt expired'){
+
+    if(res.data?.message === 'jwt expired' || res.status === 401){
         console.log("JWT EXPIRED AGAIN");
         //get refreshToken
         let store = new Store(STORE_KEY);
         let refreshToken = await store.get("refreshKey");
-        console.log({refreshToken});
         if(refreshToken){
             const r = await instance.get("/user/token/refresh", {
                 headers: {
@@ -23,11 +23,14 @@ instance.interceptors.response.use(async (res: AxiosResponse) => {
                 }
             });
             const data = r?.data;
-            if(data.success){
+            if(data?.success){
                 let token = data?.data?.token;
                 await store.set("accessKey", token);
                 res.config.headers["Authorization"] = `Bearer ${token}`;
                 return instance(res.config);
+            }else {
+                window.localStorage.removeItem(STORE_KEY);
+                window.location.href = "/login";
             }
         }
     }

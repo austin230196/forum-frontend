@@ -1,5 +1,5 @@
 const RegisterTemplate = ({canClose=true}: IRegisterTemplate) => {
-    const isSubmitting = useRef(false);
+    const [submitting, setSubmitting] = useState(false);
     const [formstate, setFormstate] = useState({
         email: "",
         name: "",
@@ -65,7 +65,7 @@ const RegisterTemplate = ({canClose=true}: IRegisterTemplate) => {
     }
 
     async function registerUserHandler() {
-        isSubmitting.current = true;
+        setSubmitting(() => true);
         try{
             const res = await register.mutateAsync({...formstate});
             const data = await res.data;
@@ -73,18 +73,18 @@ const RegisterTemplate = ({canClose=true}: IRegisterTemplate) => {
             toast(data.message);
             //welcome page
             navigate("/user/welcome");
-            // showLoginHandler();
         }catch(e: any){
             toast(e.message, {type: 'error'});
         }finally{
-            isSubmitting.current = false;
+            setSubmitting(() => false);
         }
     }
+
     return (
-        <RegisterTemplateWrapper animate={{y: 0}} initial={{y: -100}} exit={{y: 0}} transition={{stiffness: 0.3, type:'inertia'}}>
-            {canClose && (<motion.span whileHover={{scale: 1.2, color: 'red'}} transition={{duration: 0.8, type: 'tween'}}>
+        <RegisterTemplateWrapper>
+            {canClose && (<span>
                 <MdClear onClick={closeModal} />
-            </motion.span>)}
+            </span>)}
             <RegisterTemplateTop>
                 <Logo />
             </RegisterTemplateTop>
@@ -93,29 +93,27 @@ const RegisterTemplate = ({canClose=true}: IRegisterTemplate) => {
                 <div>
                     <label>Name</label>
                     <input type="name" style={{borderColor: feedback["name"] ? 'red' : ''}} value={formstate.name} onChange={changeHandler} name="name" placeholder="Enter fullname" />
-                    {feedback["name"] && <motion.i initial={{opacity: 0, x: -100}} transition={{stiffness: 0.5}} exit={{opacity: 0, x: -100}} animate={{opacity: 1, x:0}}><MdInfo /> {feedback["name"]}</motion.i>}
+                    {feedback["name"] && <i><MdInfo /> {feedback["name"]}</i>}
                 </div>
                 <div>
                     <label>Email</label>
                     <input type="email" style={{borderColor: feedback["email"] ? 'red' : ''}} value={formstate.email} onChange={changeHandler} name="email" placeholder="Enter your email" />
-                    {feedback["email"] && <motion.i initial={{opacity: 0, x: -100}} transition={{stiffness: 0.5}} exit={{opacity: 0, x: -100}} animate={{opacity: 1, x:0}}><MdInfo /> {feedback["email"]}</motion.i>}
+                    {feedback["email"] && <i><MdInfo /> {feedback["email"]}</i>}
                 </div>
                 <div>
                     <label>Password</label>
                     <input type="password" style={{borderColor: feedback["password"] ? 'red' : ''}} value={formstate.password} onChange={changeHandler} name="password" placeholder="Enter your password" />
-                    {feedback["password"] && <motion.i initial={{opacity: 0, x: -100}} transition={{stiffness: 0.5}} animate={{opacity: 1, x:0}} exit={{opacity: 0, x: -100}}><MdInfo /> {feedback["password"]}</motion.i>}
+                    {feedback["password"] && <i><MdInfo /> {feedback["password"]}</i>}
                 </div>
-                <motion.p whileHover={{scale: 1.01}}>Already have an account? <a onClick={showLoginHandler}>Login</a> </motion.p>
+                <p>Already have an account? <a onClick={showLoginHandler}>Login</a> </p>
                 <section>
-                    <motion.button
+                    <button
                     onClick={registerUserHandler}
-                    whileHover={{scale: 1.1}}
-                    transition={{stiffness: 0.5, type:'inertia'}}
                     >
                         {
-                            isSubmitting.current ? <Loader /> : <span>Register</span>
+                            submitting ? <CircularLoader size={20} /> : <span>Register</span>
                         }
-                    </motion.button>
+                    </button>
                 </section>
             </RegisterForm>
         </RegisterTemplateWrapper>
@@ -126,14 +124,13 @@ const RegisterTemplate = ({canClose=true}: IRegisterTemplate) => {
 
 
 import styled from "styled-components";
-import {motion} from "framer-motion";
 import { MdClear, MdInfo } from "react-icons/md";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import {toast} from "react-toastify";
 
 import Logo from "../../../components/Logo";
 import Regex from "../../../utils/Regex";
-import Loader from "../../../components/Loader";
+import {CircularLoader} from "../../../components";
 import { useRegisterUser } from "../../../store/mutations/user";
 import { useNavigate } from "react-router-dom";
 
@@ -144,7 +141,7 @@ type IRegisterTemplate = {
 }
 
 
-const RegisterTemplateWrapper = styled(motion.div)`
+const RegisterTemplateWrapper = styled.div`
     background-color: ${props => props.theme.secondary.main};
     width: min(100% - 0.5rem, 500px);
     margin-inline: auto;
@@ -166,7 +163,7 @@ const RegisterTemplateWrapper = styled(motion.div)`
     }
 `;
 
-const RegisterForm = styled(motion.div)`
+const RegisterForm = styled.div`
     display:flex;
     flex-direction: column;
     align-items: center;
@@ -239,7 +236,7 @@ const RegisterForm = styled(motion.div)`
     }
 `;
 
-const RegisterTemplateTop = styled(motion.div)``;
+const RegisterTemplateTop = styled.div``;
 
 
 

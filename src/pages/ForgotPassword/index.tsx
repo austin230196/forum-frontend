@@ -1,13 +1,10 @@
 const ForgotPassword = ({}) => (
-    <AnimatePresence>
-        <ForgotPasswordWrapper>
-            <ForgotPasswordTemplate />
-        </ForgotPasswordWrapper>
-    </AnimatePresence>
+    <ForgotPasswordWrapper>
+        <ForgotPasswordTemplate />
+    </ForgotPasswordWrapper>
 )
 
 
-import { AnimatePresence } from "framer-motion";
 import styled from "styled-components";
 
 import ForgotPasswordTemplate from "./components/ForgotPasswordTemplate";

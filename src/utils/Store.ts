@@ -1,12 +1,10 @@
-import { IUserdata } from "../types/User";
-
 export default class Store {
-    public store: {refreshKey: string|null; accessKey: string|null, userdata: IUserdata|null} = {refreshKey: null, accessKey: null, userdata: null} 
+    public store: {refreshKey: string|null; accessKey: string|null} = {refreshKey: null, accessKey: null} 
     public constructor(protected storeKey: string){
 
     }
 
-    public async get(key: "refreshKey" | "accessKey" | "userdata", defaultValue?: string) {
+    public async get(key: "refreshKey" | "accessKey", defaultValue?: string) {
         let value = window.localStorage.getItem(this.storeKey);
         if(!value) await this.set(key, defaultValue!);
         else this.store = JSON.parse(value!);
@@ -14,7 +12,7 @@ export default class Store {
     }
 
 
-    public async set(key: string, value: string){
+    public async set(key: "refreshKey" | "accessKey", value: string){
         //first fetch the storage
         let storage = window.localStorage.getItem(this.storeKey);
         //if there is no storage we create a new one using the template

@@ -1,4 +1,4 @@
-type Category = "general" | "news" | "sports" | "algorithms" | "organization" | "project";
+type ICategory = "general" | "news" | "sports" | "algorithms" | "organization" | "project";
 
 
-export default Category;
+export default ICategory;

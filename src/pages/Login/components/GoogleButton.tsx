@@ -1,7 +1,7 @@
 const GoogleButton = () => {
-    const {data} = useGoogleLogin();
+    const queryClient = useQueryClient();
     async function socialLoginHandler(){
-        const res = data?.data;
+        const res = await queryClient.fetchQuery(getGoogleLoginURL());
         const url = res?.data?.url;
         window.localStorage.setItem(SOCIAL_AUTH_PROVIDER, 'google');
         window.location.href = url;
@@ -17,13 +17,13 @@ const GoogleButton = () => {
 
 
 import styled from "styled-components";
-import { motion } from "framer-motion"
 import { FaGoogle } from "react-icons/fa";
 
-import { useGoogleLogin } from "../../../store/queries/user";
+import { getGoogleLoginURL } from "../../../store/queries/user";
 import { SOCIAL_AUTH_PROVIDER } from "../../../constants";
+import { useQueryClient } from "@tanstack/react-query";
 
-const WGoogleButton = styled(motion.button)`
+const WGoogleButton = styled.button`
     background-color: ${props => props.theme.secondary.main};
     color: ${props => props.theme.dark.main};
     border: 2px solid ${props => props.theme.dark.main};

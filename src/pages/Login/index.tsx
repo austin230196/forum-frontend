@@ -1,13 +1,10 @@
 const Login = ({}) => (
-    <AnimatePresence>
-        <LoginWrapper>
-            <LoginTemplate canClose={false} />
-        </LoginWrapper>
-    </AnimatePresence>
+    <LoginWrapper>
+        <LoginTemplate canClose={false} />
+    </LoginWrapper>
 )
 
 
-import { AnimatePresence } from "framer-motion";
 import styled from "styled-components";
 
 import LoginTemplate from "./components/LoginTemplate";

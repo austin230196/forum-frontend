@@ -1,13 +1,10 @@
-const Login = ({}) => (
-    <AnimatePresence>
-        <RegisterWrapper>
-            <RegisterTemplate canClose={false} />
-        </RegisterWrapper>
-    </AnimatePresence>
+const Register = ({}) => (
+    <RegisterWrapper>
+        <RegisterTemplate canClose={false} />
+    </RegisterWrapper>
 )
 
 
-import { AnimatePresence } from "framer-motion";
 import styled from "styled-components";
 
 import RegisterTemplate from "./components/RegisterTemplate";
@@ -18,4 +15,4 @@ const RegisterWrapper = styled.div`
 `;
 
 
-export default Login;
+export default Register;

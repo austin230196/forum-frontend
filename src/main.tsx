@@ -5,6 +5,7 @@ import {RouterProvider} from "react-router-dom";
 import { ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import 'react-loading-skeleton/dist/skeleton.css'
 
 import router from './router.ts';
 import './index.css'
@@ -14,6 +15,13 @@ import SuspenseLoader from './components/SuspenseLoader.tsx';
 
 
 const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: true,
+      refetchOnMount: true
+    }
+  }
 });
 
 
@@ -21,7 +29,6 @@ const queryClient = new QueryClient({
 const root = createRoot(document.getElementById('root')!)
 root.render(
   <React.StrictMode>
-    <GlobalContextProvider>
       <ThemeProvider theme={theme}>
         <ToastContainer
           position="top-right"
@@ -35,15 +42,16 @@ root.render(
           pauseOnHover
           theme="light"
           transition={Bounce}
-        />
+          />
         <QueryClientProvider client={queryClient}>
-          <Suspense 
-            fallback={<SuspenseLoader />}
-          >
-            <RouterProvider router={router} />
-          </Suspense>
+          <GlobalContextProvider>
+            <Suspense 
+              fallback={<SuspenseLoader />}
+            >
+              <RouterProvider router={router} />
+            </Suspense>
+          </GlobalContextProvider>
         </QueryClientProvider>
       </ThemeProvider>
-    </GlobalContextProvider>
   </React.StrictMode>,
 )

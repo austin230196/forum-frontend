@@ -41,7 +41,7 @@ const ForgotPasswordTemplate = () => {
 
 
     return (
-        <ForgotPasswordTemplateWrapper animate={{y: 0}} initial={{y: -100}} exit={{y: 0}} transition={{stiffness: 0.3, type:'inertia'}}>
+        <ForgotPasswordTemplateWrapper>
             <ForgotPasswordTemplateTop>
                 <Logo />
             </ForgotPasswordTemplateTop>
@@ -54,20 +54,18 @@ const ForgotPasswordTemplate = () => {
                 <div>
                     <label>Email</label>
                     <input type="email" style={{borderColor: feedback ? 'red' : ''}} value={email} onChange={changeHandler} name="email" placeholder="Enter your email" />
-                    {feedback && <motion.i initial={{opacity: 0, x: -100}} transition={{stiffness: 0.5}} exit={{opacity: 0, x: -100}} animate={{opacity: 1, x:0}}><MdInfo /> {feedback}</motion.i>}
+                    {feedback && <i><MdInfo /> {feedback}</i>}
                 </div>
-                <motion.p whileHover={{scale: 1.01}}><span>Remember Password? <a onClick={showLoginHandler}>Login</a></span> </motion.p>
+                <p><span>Remember Password? <a onClick={showLoginHandler}>Login</a></span> </p>
 
                 <section>
-                    <motion.button
+                    <button
                     onClick={sendForgotPasswordHandler}
-                    whileHover={{scale: 1.1}}
-                    transition={{stiffness: 0.5, type:'inertia'}}
                     >
                         {
-                            isSubmitting.current ? <Loader /> : <span>Send email</span>
+                            isSubmitting.current ? <CircularLoader size={20} /> : <span>Send email</span>
                         }
-                    </motion.button>
+                    </button>
                 </section>
             </ForgotPasswordForm>
         </ForgotPasswordTemplateWrapper>
@@ -78,7 +76,6 @@ const ForgotPasswordTemplate = () => {
 
 
 import styled from "styled-components";
-import {motion} from "framer-motion";
 import { MdInfo } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { ChangeEvent, useRef, useState } from "react";
@@ -86,12 +83,12 @@ import {toast} from "react-toastify";
 
 import Logo from "../../../components/Logo";
 import Regex from "../../../utils/Regex";
-import Loader from "../../../components/Loader";
+import {CircularLoader} from "../../../components";
 import { useForgotPassword } from "../../../store/mutations/user";
 
 
 
-const ForgotPasswordTemplateWrapper = styled(motion.div)`
+const ForgotPasswordTemplateWrapper = styled.div`
     background-color: ${props => props.theme.secondary.main};
     width: min(100% - 0.5rem, 500px);
     margin-inline: auto;
@@ -113,7 +110,7 @@ const ForgotPasswordTemplateWrapper = styled(motion.div)`
     }
 `;
 
-const ForgotPasswordForm = styled(motion.div)`
+const ForgotPasswordForm = styled.div`
     display:flex;
     flex-direction: column;
     align-items: center;
@@ -209,7 +206,7 @@ const ForgotPasswordForm = styled(motion.div)`
     }
 `;
 
-const ForgotPasswordTemplateTop = styled(motion.div)``;
+const ForgotPasswordTemplateTop = styled.div``;
 
 const AuthHeader = styled.div`
     gap: 10px;

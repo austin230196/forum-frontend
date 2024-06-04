@@ -1,8 +1,12 @@
 
 const Profile = () => {
-    const {userdata} = useGlobalContext();
+    const store = useGlobalContext();
+    const userdata = useStore(store as StoreApi<GlobalState>, (state) => state?.userdata);
     const inputRef = useRef<HTMLInputElement>(null);
     const [preview, setPreview] = useState<string|null>(null);
+    const [file, setFile] = useState<File|null>(null);
+    const [showSettings, setShowSettings] = useState(false);
+    const uploadFile = useUploadFile();
 
     console.log({userdata});
     function triggerUpload(){
@@ -10,29 +14,56 @@ const Profile = () => {
     }
 
     function previewProfileAvatar(e: ChangeEvent<HTMLInputElement>){
-        let file = (e.target.files as FileList)[0];
-        setPreview(() => URL.createObjectURL(file));
-        // let reader = new FileReader();
-        // reader.onload = res => {
-        //     console.log({res});
-        // }
-        // reader.readAsArrayBuffer(file);
+        let f = (e.target.files as FileList)[0];
+        setPreview(() => URL.createObjectURL(f));
+        setFile(() => f);
+    }
+
+
+    function showSettingsHandler(){
+        setShowSettings(() => true);
+    }
+
+    function hideSettingsHandler(){
+        setShowSettings(() => false);
+    }
+
+    async function uploadFileHandler(){
+        let reader = new FileReader();
+        reader.onload = async e => {
+            console.log({e});
+            const result: ArrayBuffer | null | string | undefined = e.target?.result;
+            console.log({result});
+            //now we send this data to the backend in chunk
+            // let totalLength = (result! as ArrayBuffer).byteLength;
+            const res = await uploadFile.mutateAsync({
+                filesize: file?.size!,
+                filename: file?.name!,
+                file: result as ArrayBuffer
+            })
+            console.log({res});
+            await store?.getState().updateUserdata();
+        }
+        reader.readAsArrayBuffer(file!);
+        setFile(() => null);
     }
     return (
         <MainLayout showSidebar={false}>
+            {
+                showSettings ? <SettingsModal  close={hideSettingsHandler}  /> : null
+            }
             <ProfileWrapper>
                 <ProfileLayout>
-                    <span><IoSettings /></span>
-
+                    <span onClick={showSettingsHandler}><IoSettings /></span>
                     <ProfileInfo>
                         <section>
                             <ProfileAvatar src={preview ? preview : userdata?.avatar ? userdata?.avatar : avatar} alt="Avatar" />
-                            <input type="file" style={{display: "none"}} onChange={previewProfileAvatar} ref={inputRef} />
+                            <input type="file" style={{display: "none"}} accept="image/*" onChange={previewProfileAvatar} ref={inputRef} />
                             <span onClick={triggerUpload}>
                                 <MdEdit />
                             </span>
-                            {preview ? 
-                            (<span className="upload">
+                            {file ? 
+                            (<span className="upload" onClick={uploadFileHandler}>
                                 <FaFileUpload />
                             </span>) : null}
                         </section>
@@ -68,8 +99,12 @@ import { FaFileUpload } from "react-icons/fa";
 
 import MainLayout from "../../layout/MainLayout"
 import { useGlobalContext } from "../../contexts/GlobalContext";
-import avatar from "../../assets/avatar.jpeg";
+import avatar from "../../assets/images/avatar.jpeg";
 import { ChangeEvent, useRef, useState } from "react";
+import { useUploadFile } from "../../store/mutations/user";
+import { StoreApi, useStore } from "zustand";
+import { GlobalState } from "../../contexts/store";
+import SettingsModal from "./components/SettingsModal";
 
 
 const ProfileWrapper = styled.div`

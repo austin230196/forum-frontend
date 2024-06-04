@@ -1,26 +1,61 @@
 const UpdatePasswordTemplate = () => {
-    const isSubmitting = useRef(false);
+    const [submitting, setSubmitting] = useState(false);
+    const flag = useRef(true);
     const navigate = useNavigate();
-    // const {dispatch} = useGlobalContext();
-    const [email, setEmail] = useState("");
-    const [feedback, setFeedback] = useState<string|null>(null);
-    const forgotPassword = useForgotPassword();
+    const location = useLocation();
+    const [formstate, setFormstate] = useState({
+        password: "",
+        confirmPassword: ""
+    });
+    const [feedback, setFeedback] = useState({
+        password: null,
+        confirmPassword: null
+    });
+    const updatePassword = useUpdatePassword();
+    const [token, setToken] = useState<string|null>(null);
 
+    useEffect(() => {
+        if(flag.current){
+            let t = new URLSearchParams(location.search).get("token");
+            if(!t) {
+                toast('No token found', {
+                    type: 'error'
+                })
+                navigate("/login");
+            }
+            setToken(() => t);
+            flag.current = false;
+        }
+    }, [])
+
+    
     function changeHandler(e: ChangeEvent<HTMLInputElement>): void{
-        const {value} = e.target;
+        const {value, name} = e.target;
         let val = '';
-        if(!Regex.isEmail(value))  val = 'Invalid email address';
-        setFeedback(() => {
-            return val ? val : null
+        if(name === 'password'){
+            if(!Regex.isValidPassword(value)) val = 'Password must be atleast 6 characters';
+        }else {
+            if(formstate.password !== value) val = 'Passwords don\'t match';
+        }
+        setFeedback(old => {
+            return {
+                ...old,
+                [name]: val
+            }
         })
-        setEmail(() => value);
+        setFormstate(old => {
+            return {
+                ...old,
+                [name]: value
+            }
+        })
     }
 
-    async function sendForgotPasswordHandler() {
-        isSubmitting.current = true;
+    async function updatePasswordHandler() {
+        setSubmitting(() => true);
         try{
-            if(!email) return;
-            const res = await forgotPassword.mutateAsync(email);
+            if(formstate.password !== formstate.confirmPassword) throw new Error('Passwords don\'t match');
+            const res = await updatePassword.mutateAsync({token: token!, password: formstate.password});
             console.log({res});
             const data = res.data;
             if(!data.success) throw new Error(data.message);
@@ -31,7 +66,7 @@ const UpdatePasswordTemplate = () => {
         }catch(e: any){
             toast(e.message, {type: 'error'});
         }finally {
-            isSubmitting.current = false;
+            setSubmitting(() => false);
         }
     }
 
@@ -41,36 +76,40 @@ const UpdatePasswordTemplate = () => {
 
 
     return (
-        <ForgotPasswordTemplateWrapper animate={{y: 0}} initial={{y: -100}} exit={{y: 0}} transition={{stiffness: 0.3, type:'inertia'}}>
-            <ForgotPasswordTemplateTop>
+        <UpdatePasswordTemplateWrapper>
+            <UpdatePasswordTemplateTop>
                 <Logo />
-            </ForgotPasswordTemplateTop>
+            </UpdatePasswordTemplateTop>
 
-            <ForgotPasswordForm>
+            <UpdatePasswordForm>
                 <AuthHeader>
-                    <h3>Forgot password</h3>
-                    <p>Enter email associated with the account.</p>
+                    <h3>Update password</h3>
+                    <p>Enter your new password</p>
                 </AuthHeader>
                 <div>
-                    <label>Email</label>
-                    <input type="email" style={{borderColor: feedback ? 'red' : ''}} value={email} onChange={changeHandler} name="email" placeholder="Enter your email" />
-                    {feedback && <motion.i initial={{opacity: 0, x: -100}} transition={{stiffness: 0.5}} exit={{opacity: 0, x: -100}} animate={{opacity: 1, x:0}}><MdInfo /> {feedback}</motion.i>}
+                    <label>Password</label>
+                    <input type="password" style={{borderColor: feedback.password ? 'red' : ''}} value={formstate.password} onChange={changeHandler} name="password" placeholder="Enter your new password" />
+                    {feedback.password && <i><MdInfo /> {feedback.password}</i>}
                 </div>
-                <motion.p whileHover={{scale: 1.01}}><span>Remember Password? <a onClick={showLoginHandler}>Login</a></span> </motion.p>
+                <div>
+                    <label>Confirm Password</label>
+                    <input type="password" style={{borderColor: feedback.confirmPassword ? 'red' : ''}} value={formstate.confirmPassword} onChange={changeHandler} name="confirmPassword" placeholder="Confirm password" />
+                    {feedback.confirmPassword && <i><MdInfo /> {feedback.confirmPassword}</i>}
+                </div>
+                <p><span>Remember Password? <a onClick={showLoginHandler}>Login</a></span> </p>
 
                 <section>
-                    <motion.button
-                    onClick={sendForgotPasswordHandler}
-                    whileHover={{scale: 1.1}}
-                    transition={{stiffness: 0.5, type:'inertia'}}
+                    <button
+                    onClick={updatePasswordHandler}
+                    disabled={submitting || !!feedback.password || !!feedback.confirmPassword}
                     >
                         {
-                            isSubmitting.current ? <Loader /> : <span>Send email</span>
+                            submitting ? <CircularLoader size={20} /> : <span>Update Password</span>
                         }
-                    </motion.button>
+                    </button>
                 </section>
-            </ForgotPasswordForm>
-        </ForgotPasswordTemplateWrapper>
+            </UpdatePasswordForm>
+        </UpdatePasswordTemplateWrapper>
     )
 }
 
@@ -78,21 +117,19 @@ const UpdatePasswordTemplate = () => {
 
 
 import styled from "styled-components";
-import {motion} from "framer-motion";
 import { MdInfo } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
-import { ChangeEvent, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import {toast} from "react-toastify";
 
 import Logo from "../../../components/Logo";
 import Regex from "../../../utils/Regex";
-import Loader from "../../../components/Loader";
-// import { useGlobalContext } from "../../../contexts/GlobalContext";
-import { useForgotPassword } from "../../../store/mutations/user";
+import {CircularLoader} from "../../../components";
+import { useUpdatePassword } from "../../../store/mutations/user";
 
 
 
-const ForgotPasswordTemplateWrapper = styled(motion.div)`
+const UpdatePasswordTemplateWrapper = styled.div`
     background-color: ${props => props.theme.secondary.main};
     width: min(100% - 0.5rem, 500px);
     margin-inline: auto;
@@ -114,7 +151,7 @@ const ForgotPasswordTemplateWrapper = styled(motion.div)`
     }
 `;
 
-const ForgotPasswordForm = styled(motion.div)`
+const UpdatePasswordForm = styled.div`
     display:flex;
     flex-direction: column;
     align-items: center;
@@ -185,6 +222,11 @@ const ForgotPasswordForm = styled(motion.div)`
             padding: 10px;
             border-radius: 4px;
             cursor: pointer;
+            opacity: 1;
+
+            &:disabled {
+                opacity: 0.6;
+            }
         }
     }
 
@@ -210,7 +252,7 @@ const ForgotPasswordForm = styled(motion.div)`
     }
 `;
 
-const ForgotPasswordTemplateTop = styled(motion.div)``;
+const UpdatePasswordTemplateTop = styled.div``;
 
 const AuthHeader = styled.div`
     gap: 10px;

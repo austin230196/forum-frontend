@@ -1,19 +1,42 @@
 const Nav = ({showLogo=false}: INav) => {
     const [showDropdown, setShowDropDown] = useState(false);
-    const {dispatch, isAuth, userdata} = useGlobalContext();
+    const store = useGlobalContext();
+    const userdata = useStore(store as StoreApi<GlobalState>, (state) => state?.userdata);
+    const logout = useLogout();
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        (async() => {
+            try{
+                await store?.getState().updateUserdata();
+            }catch(e: any){
+                toast(e.message, {type: 'error'})
+            }finally {
+                setLoading(() => false);
+            }
+        })()
+    }, [])
 
     function toggleDropdown(){
         setShowDropDown(old => !old);
     }
 
-    function logoutHandler() {
-        dispatch({
-            type: LOGOUT
-        })
-        setTimeout(() => {
-            navigate("/login");
-        }, 1000);
+    async function logoutHandler() {
+        setLoading(() => true);
+        try{
+            await logout.mutateAsync();
+            window.localStorage.removeItem(STORE_KEY);
+            setTimeout(() => {
+                navigate("/login");
+            }, 1000);
+        }catch(e: any){
+            toast(e.message, {
+                type: 'error'
+            })
+        }finally {
+            setLoading(() => false);
+        }
     }
 
     return (
@@ -35,7 +58,7 @@ const Nav = ({showLogo=false}: INav) => {
                     {
                         showDropdown ? 
                         (
-                            isAuth ? 
+                            userdata ? 
                             (<section>
                                 <li>
                                     <NavLink to="/profile"><CgProfile />  Profile</NavLink>
@@ -67,15 +90,19 @@ import { SiGnuprivacyguard } from "react-icons/si";
 import { FiSearch } from "react-icons/fi";
 import { CgProfile } from "react-icons/cg";
 import { RiLogoutCircleLine, RiLoginCircleLine } from "react-icons/ri";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 import Avatar from "./Avatar"
 import QuickLogin from "../pages/Login/QuickLogin";
 import QuickRegister from "../pages/Register/QuickRegister";
 import { useGlobalContext } from "../contexts/GlobalContext";
-import { LOGOUT } from "../contexts/actions";
 import Logo from "./Logo";
+import { useLogout } from "../store/mutations/user";
+import { toast } from "react-toastify";
+import { STORE_KEY } from "../constants";
+import { StoreApi, useStore } from "zustand";
+import { GlobalState } from "../contexts/store";
 
 type INav = {
     showLogo: Boolean
@@ -99,10 +126,6 @@ const SearchInput = styled.div`
         border: none;
         flex: 1;
     }
-
-    > svg {
-        // color: ;
-    }
 `;
 const NavWrapper = styled.nav<{$showLogo: Boolean}>`
     display: flex;
@@ -113,7 +136,7 @@ const NavWrapper = styled.nav<{$showLogo: Boolean}>`
     padding-block: ${props => props.$showLogo ? '20px' : '40px'};
     @media screen and (max-width:595px){
         padding-bottom: 10px;
-        padding-top: 20px;
+        padding-top: 5px;
     }
 `;
 const NavRight = styled.div`

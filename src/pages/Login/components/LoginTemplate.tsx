@@ -1,26 +1,25 @@
 const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
-    const isSubmitting = useRef(false);
     const flag = useRef(true);
     const login = useLoginUser();
     const navigate = useNavigate();
     const location = useLocation();
-    const {dispatch} = useGlobalContext();
     const socialLogin = useLoginSocialUser();
+    const [submitting, setSubmitting] = useState(false);
     const [formstate, setFormstate] = useState({
         email: "",
         password: ""
     })
-    const [feedback, setFeedback] = useState({
-        email: "",
-        password: ""
+    const [feedback, setFeedback] = useState<{email: string|null; password: string|null}>({
+        email: null,
+        password: null
     })
 
     useEffect(() => {
         if(flag.current){
             const urlParams = new URLSearchParams(location.search);
-            const paramProxy = new Proxy(urlParams, {
-                get: (target, prop) => target.get(prop as string)
-            })
+            // const paramProxy = new Proxy(urlParams, {
+            //     get: (target, prop) => target.get(prop as string)
+            // })
             const code = urlParams.get("code");
             console.log({code});
             if(code){
@@ -45,7 +44,7 @@ const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
     function changeHandler(e: ChangeEvent<HTMLInputElement>): void{
         const {name, value} = e.target;
         if(name === 'email'){
-            let val = '';
+            let val = null;
             if(!Regex.isEmail(value))  val = 'Invalid email address';
             setFeedback((old) => {
                 return {
@@ -54,7 +53,7 @@ const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
                 }
             })
         }else {
-            let val = '';
+            let val = null;
             if(!Regex.isValidPassword(value)) val = 'Password must be atleast 6 characters';
             setFeedback((old) => {
                 return {
@@ -76,7 +75,7 @@ const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
     }
 
     async function loginUserHandler() {
-        isSubmitting.current = true;
+        setSubmitting(() => true);
         try{
             const res = await login.mutateAsync({...formstate});
             console.log({res});
@@ -86,20 +85,15 @@ const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
         }catch(e: any){
             toast(e.message, {type: 'error'});
         }finally {
-            isSubmitting.current = false;
+            setSubmitting(() => false);
         }
     }
 
     async function loginUser(data: any){
         const userdata = data.data;
-        dispatch({
-            type: LOGIN,
-            payload: {
-                userdata: userdata?.user,
-                refreshKey: userdata?.refreshToken,
-                accessKey: userdata?.accessToken
-            }
-        })
+        const store = new Store(STORE_KEY);
+        await store.set("refreshKey", userdata?.refreshToken);
+        await store.set("accessKey", userdata?.accessToken);
         if(canClose){
             closeModal();
         }else {
@@ -117,10 +111,10 @@ const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
         }
     }
     return (
-        <LoginTemplateWrapper animate={{y: 0}} initial={{y: -100}} exit={{y: 0}} transition={{stiffness: 0.3, type:'inertia'}}>
-            {canClose && (<motion.span whileHover={{scale: 1.2, color: 'red'}} transition={{duration: 0.8, type: 'tween'}}>
+        <LoginTemplateWrapper>
+            {canClose && (<span>
                 <MdClear onClick={closeModal} />
-            </motion.span>)}
+            </span>)}
             <LoginTemplateTop>
                 <Logo />
             </LoginTemplateTop>
@@ -129,14 +123,14 @@ const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
                 <div>
                     <label>Email</label>
                     <input type="email" style={{borderColor: feedback["email"] ? 'red' : ''}} value={formstate.email} onChange={changeHandler} name="email" placeholder="Enter your email" />
-                    {feedback["email"] && <motion.i initial={{opacity: 0, x: -100}} transition={{stiffness: 0.5}} exit={{opacity: 0, x: -100}} animate={{opacity: 1, x:0}}><MdInfo /> {feedback["email"]}</motion.i>}
+                    {feedback["email"] && <i><MdInfo /> {feedback["email"]}</i>}
                 </div>
                 <div>
                     <label>Password</label>
                     <input type="password" style={{borderColor: feedback["password"] ? 'red' : ''}} value={formstate.password} onChange={changeHandler} name="password" placeholder="Enter your password" />
-                    {feedback["password"] && <motion.i initial={{opacity: 0, x: -100}} transition={{stiffness: 0.5}} animate={{opacity: 1, x:0}} exit={{opacity: 0, x: -100}}><MdInfo /> {feedback["password"]}</motion.i>}
+                    {feedback["password"] && <i><MdInfo /> {feedback["password"]}</i>}
                 </div>
-                <motion.p whileHover={{scale: 1.01}}><span>Don't have an account? <a onClick={showRegisterHandler}>Register</a></span> <NavLink to="/forgot-password">Forgot password</NavLink></motion.p>
+                <p><span>Don't have an account? <a onClick={showRegisterHandler}>Register</a></span> <NavLink to="/forgot-password">Forgot password</NavLink></p>
                 <aside id="social__auth">
                     <p>or login with</p>
                     <div>
@@ -145,15 +139,14 @@ const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
                     </div>
                 </aside>
                 <section>
-                    <motion.button
+                    <button
+                    disabled={submitting || !!feedback.email || !!feedback.password}
                     onClick={loginUserHandler}
-                    whileHover={{scale: 1.1}}
-                    transition={{stiffness: 0.5, type:'inertia'}}
                     >
                         {
-                            isSubmitting.current ? <Loader /> : <span>Login</span>
+                            submitting ? <CircularLoader size={20} /> : <span>Login</span>
                         }
-                    </motion.button>
+                    </button>
                 </section>
             </LoginForm>
         </LoginTemplateWrapper>
@@ -164,7 +157,6 @@ const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
 
 
 import styled from "styled-components";
-import {motion} from "framer-motion";
 import { MdClear, MdInfo } from "react-icons/md";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
@@ -172,13 +164,12 @@ import {toast} from "react-toastify";
 
 import Logo from "../../../components/Logo";
 import Regex from "../../../utils/Regex";
-import Loader from "../../../components/Loader";
+import {CircularLoader} from "../../../components";
 import { useLoginSocialUser, useLoginUser } from "../../../store/mutations/user";
-import { useGlobalContext } from "../../../contexts/GlobalContext";
-import { LOGIN } from "../../../contexts/actions";
 import GoogleButton from "./GoogleButton";
 import GithubButton from "./GithubButton";
-import { SOCIAL_AUTH_PROVIDER } from "../../../constants";
+import { SOCIAL_AUTH_PROVIDER, STORE_KEY } from "../../../constants";
+import Store from "../../../utils/Store";
 
 
 
@@ -187,7 +178,7 @@ type ILoginTemplate = {
 }
 
 
-const LoginTemplateWrapper = styled(motion.div)`
+const LoginTemplateWrapper = styled.div`
     background-color: ${props => props.theme.secondary.main};
     width: min(100% - 0.5rem, 500px);
     margin-inline: auto;
@@ -209,7 +200,7 @@ const LoginTemplateWrapper = styled(motion.div)`
     }
 `;
 
-const LoginForm = styled(motion.div)`
+const LoginForm = styled.div`
     display:flex;
     flex-direction: column;
     align-items: center;
@@ -313,7 +304,7 @@ const LoginForm = styled(motion.div)`
     }
 `;
 
-const LoginTemplateTop = styled(motion.div)``;
+const LoginTemplateTop = styled.div``;
 
 
 

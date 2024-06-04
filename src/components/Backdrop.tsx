@@ -9,7 +9,6 @@ const Backdrop = ({children, id, style}: IBackdrop) => {
 
 
 import styled from "styled-components"
-import {motion} from "framer-motion";
 import { ReactNode, CSSProperties } from "react";
 
 
@@ -20,7 +19,7 @@ type IBackdrop = {
 }
 
 
-const BackdropWrapper = styled(motion.div)`
+const BackdropWrapper = styled.div`
     position: fixed;
     top: 0;
     left: 0;

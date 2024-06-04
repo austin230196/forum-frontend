@@ -10,6 +10,7 @@ const Register = lazy(() => import("./pages/Register"));
 const Profile = lazy(() => import("./pages/Profile"));
 const UserWelcome = lazy(() => import("./pages/UserWelcome"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const UpdatePassword = lazy(() => import("./pages/UpdatePassword"));
 
 
 const router = createBrowserRouter([
@@ -46,6 +47,11 @@ const router = createBrowserRouter([
     {
         path: "/forgot-password",
         Component: ForgotPassword,
+        children: []
+    },
+    {
+        path: "/update-password",
+        Component: UpdatePassword,
         children: []
     },
     {

@@ -7,10 +7,14 @@ const theme = {
         dark: "#DBDBDE"
     },
     dark: {
-        main: "rgb(50, 50, 50)"
+        main: "rgb(50, 50, 50)",
+        light: "#5E6572"
     },
     info: {
         main: "#F6728F"
+    },
+    error: {
+        main: "#D62246"
     }
 }
 
