@@ -3,18 +3,25 @@ const theme = {
         main: "rgb(66, 129, 245)"
     },
     secondary: {
-        main: "#fff",
-        dark: "#DBDBDE"
+        main: "var(--secondary-main)",
+        light: "var(--secondary-light)",
+        dark: "var(--secondary-dark)"
     },
     dark: {
-        main: "rgb(50, 50, 50)",
-        light: "#5E6572"
+        main: "var(--dark-main)",
+        light: "var(--dark-light)"
     },
     info: {
-        main: "#F6728F"
+        main: "#17B890"
     },
     error: {
         main: "#D62246"
+    },
+    extra: {
+        main: "#FFBC42"
+    },
+    backdrop: {
+        main: "var(--backdrop)"
     }
 }
 

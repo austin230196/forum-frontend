@@ -1,9 +1,10 @@
 const Nav = ({showLogo=false}: INav) => {
     const [showDropdown, setShowDropDown] = useState(false);
     const store = useGlobalContext();
-    const userdata = useStore(store as StoreApi<GlobalState>, (state) => state?.userdata);
+    const userdata = useStore(store as StoreApi<GlobalState>, (state) => state?.userdata?.userdata);
     const logout = useLogout();
     const [loading, setLoading] = useState(true);
+    const theme = useStore(store as StoreApi<GlobalState>, (state) => state.theme);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -17,6 +18,10 @@ const Nav = ({showLogo=false}: INav) => {
             }
         })()
     }, [])
+
+    function toggleThemeHandler(){
+        store?.getState().toggleTheme();
+    }
 
     function toggleDropdown(){
         setShowDropDown(old => !old);
@@ -53,6 +58,11 @@ const Nav = ({showLogo=false}: INav) => {
                     <span></span>
                     <FaBell />
                 </Bell> */}
+                <ThemeController onClick={toggleThemeHandler}>
+                    {
+                        theme === 'light' ? <BiMoon /> : <BiSun />
+                    }
+                </ThemeController>
                 <span onClick={toggleDropdown}>
                     <Avatar width={40} height={40} image={userdata?.avatar!} />
                     {
@@ -103,12 +113,27 @@ import { toast } from "react-toastify";
 import { STORE_KEY } from "../constants";
 import { StoreApi, useStore } from "zustand";
 import { GlobalState } from "../contexts/store";
+import { BiMoon, BiSun } from "react-icons/bi";
 
 type INav = {
     showLogo: Boolean
 }
 
 
+const ThemeController = styled.span`
+    font-size: 2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    border-radius: 50px;
+    color: ${props => props.theme.dark.main};
+
+    &:hover {
+        background-color: ${props => props.theme.backdrop.main};
+    }
+`;
 const SearchInput = styled.div`
     display: flex;
     align-items: center;
@@ -116,15 +141,18 @@ const SearchInput = styled.div`
     width: 60%;
     padding: 5px;
     border-radius: 4px;
-    background-color: #eee;
     padding-left: 10px;
-    // background-color: ${props => props.theme.secondary.light};
+    background-color: ${props => props.theme.secondary.light};
+    color: ${props => props.theme.dark.main};
 
     > input {
         outline: none;
         line-height: 2;
         border: none;
         flex: 1;
+        text-indent: 10px;
+        background-color: ${props => props.theme.secondary.main};
+        color: ${props => props.theme.dark.main};
     }
 `;
 const NavWrapper = styled.nav<{$showLogo: Boolean}>`

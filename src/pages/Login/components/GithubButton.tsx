@@ -1,4 +1,4 @@
-const GithubButton = () => {
+const GithubButton = ({disabled=false}: IAuthButton) => {
     const queryClient = useQueryClient();
     async function socialLoginHandler(){
 
@@ -8,7 +8,7 @@ const GithubButton = () => {
         window.location.href = url;
     }
     return (
-        <WGitHubButton onClick={socialLoginHandler}>
+        <WGitHubButton disabled={disabled} onClick={socialLoginHandler}>
             <FaGithub />
             <span>Github</span>
         </WGitHubButton>
@@ -23,6 +23,8 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { getGithubLoginURL } from "../../../store/queries/user";
 import { SOCIAL_AUTH_PROVIDER } from "../../../constants";
+import { IAuthButton } from "./LoginTemplate";
+
 
 const WGitHubButton = styled.button`
     background-color: ${props => props.theme.secondary.main};
@@ -34,12 +36,19 @@ const WGitHubButton = styled.button`
     align-items: center;
     gap: 15px;
     cursor: pointer;
+    opacity: 1;
 
     
     &:hover {
         color: ${props => props.theme.secondary.main};
         background-color: ${props => props.theme.dark.main};
     }
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
     > svg {
         font-size: 1.25rem;
     }

@@ -1,6 +1,6 @@
-import { queryOptions, useQuery } from "@tanstack/react-query"
+import { queryOptions } from "@tanstack/react-query"
 
-import { get2FAQrCode, getUserdata as fetchUserdata, socialLogin } from "../apis/user"
+import { get2FAQrCode, getUserdata as fetchUserdata, socialLogin, getActiveSession as fetchActiveSession, disable2FA as disable2fa } from "../apis/user"
 
 
 
@@ -20,10 +20,18 @@ export const getGithubLoginURL = () => {
 }
 
 
-export const useGet2FAUrl = () => {
-    return useQuery({
+export const get2FAUrl = () => {
+    return queryOptions({
         queryKey: ["get-2fa-url"],
         queryFn: async() => await get2FAQrCode()
+    })
+} 
+
+
+export const disable2FA = () => {
+    return queryOptions({
+        queryKey: ["disable-2fa"],
+        queryFn: async() => await disable2fa()
     })
 } 
 
@@ -32,5 +40,13 @@ export const getUserdata = () => {
     return queryOptions({
         queryKey: ["get-userdata"],
         queryFn: async() => await fetchUserdata()
+    })
+}
+
+
+export const getActiveSession = () => {
+    return queryOptions({
+        queryKey: ["get-active-session"],
+        queryFn: async() => await fetchActiveSession()
     })
 }

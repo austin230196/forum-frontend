@@ -9,6 +9,9 @@ const MainLayout = ({children, showSidebar=true}: IMainLayout) => {
                     {children}
                 </MainLayoutContent>
             </MainLayoutBody>
+            <MainLayoutFooter>
+                <p>Programmables</p> | <span>{new Date().getFullYear()}</span>
+            </MainLayoutFooter>
         </MainLayoutWrapper>
     )
 }
@@ -27,12 +30,28 @@ import Sidebar from "../components/Sidebar"
 import Nav from "../components/Nav"
 
 
+const MainLayoutFooter = styled.div`
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    background-color: ${props => props.theme.secondary.light};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    font-size: 0.8rem;
+    letter-spacing: 0.4px;
+    color: ${props => props.theme.dark.main};
+`;
 const MainLayoutWrapper = styled.div<{$showSidebar: Boolean}>`
     width: 100%;
     height: 100%;
     min-height: 100vh;
     display: grid;
     grid-template-columns: ${props => props.$showSidebar ? '300px 1fr' : '1fr'};
+    background-color: ${props => props.theme.secondary.main};
 
 
     @media screen and (max-width:875px){
@@ -54,6 +73,7 @@ const MainLayoutBody = styled.div`
     margin-inline: auto;
     padding-inline: 20px;
     padding-bottom: 200px;
+    
 `;
 const MainLayoutContent = styled.div`
     width: 100%;

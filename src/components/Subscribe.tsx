@@ -1,9 +1,40 @@
 const Subscribe = () => {
-    const [show, setShow] = useState<boolean>(true);
-    const loading = useRef(false);
+    const [show, setShow] = useState<boolean>(!!!window.localStorage.getItem(SUBSCRIBER_KEY));
+    const [loading, setLoading] = useState(false);
+    const [email, setEmail] = useState('');
+    const theme = useTheme();
+    const [feedback, setFeedback] = useState<string|null>(null);
+    const subscribe = useSubscribe();
+
     function hideBackdropHandler(){
         setShow(() => false);
     }
+
+    
+    async function subscribeHandler(){
+        setLoading(() => true);
+        try{
+            if(!email) throw new Error("Please enter your email");
+            const res = await subscribe.mutateAsync(email);
+            console.log({res});
+            if(!res.success) throw new Error(res.message);
+            window.localStorage.setItem(SUBSCRIBER_KEY, res.data);
+            toast(res.message, {type: 'success'});
+        }catch(e: any){
+            toast(e.message, {type: 'error'})
+        }finally{
+            setLoading(() => false);
+        }
+    }
+
+    function changeHandler(e: ChangeEvent<HTMLInputElement>){
+        let val = null;
+        let address = e.target.value;
+        if(!Regex.isEmail(address)) val = 'Enter a valid address';
+        setFeedback(() => val);
+        setEmail(() => address);
+    }
+
     return (
         <>
         {
@@ -17,9 +48,9 @@ const Subscribe = () => {
                         <SubscribeLeft>
                             <h1>Want to know when new discussions are added?</h1>
                             <p>Subscribe to our newsletter for regular updates</p>
-                            <SubscribeInput>
-                                <input type="email" placeholder="Enter your email address" />
-                                <button>{loading.current ? <CircularLoader size={20} /> : 'Subscribe'}</button>
+                            <SubscribeInput style={{border: feedback ? `1px solid ${theme.error.main}` : ''}}>
+                                <input type="email" placeholder="Enter your email address" value={email} onChange={changeHandler} />
+                                <button onClick={subscribeHandler} disabled={loading || !!feedback}>{loading ? <CircularLoader size={20} /> : 'Subscribe'}</button>
                             </SubscribeInput>
                             <a onClick={hideBackdropHandler}>No, thanks</a>
                         </SubscribeLeft>
@@ -36,12 +67,16 @@ const Subscribe = () => {
 
 
 
-import styled from "styled-components";
-import { useRef, useState } from "react";
+import styled, { useTheme } from "styled-components";
+import { ChangeEvent, useState } from "react";
 
 import Backdrop from "./Backdrop";
 import image from "../assets/svgs/share_link.svg";
 import {CircularLoader} from "./Loader";
+import { useSubscribe } from "../store/mutations/subscriber";
+import { toast } from "react-toastify";
+import Regex from "../utils/Regex";
+import { SUBSCRIBER_KEY } from "../constants";
 
 
 
@@ -124,6 +159,12 @@ const SubscribeInput = styled.div`
         padding: 0px 10px;
         border-radius: 6px;
         min-width: 60px;
+        opacity: 1;
+
+        &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
     }
 `;
 

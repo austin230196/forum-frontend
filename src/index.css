@@ -7,9 +7,31 @@
   transition: all 0.6s ease-out;
 }
 
+:root {
+  --secondary-main: #fff;
+  --secondary-light: rgb(238, 238, 238);
+  --secondary-dark: #DBDBDE;
+  --dark-main: rgb(50, 50, 50);
+  --dark-light: #5E6572;
+  --backdrop: rgba(0,0,0,.05);
+}
+
 
 body, html {
   width: 100vw;
   /* min-height: 100vh; */
   /* color: #4281f5 */
+}
+
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }

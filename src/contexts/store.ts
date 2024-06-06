@@ -5,13 +5,17 @@ import { ITopic } from '../types/Topic';
 import ICategory from '../types/Category';
 import { useQueryClient } from '@tanstack/react-query';
 import { getTopics } from '../store/queries/topic';
-import { getUserdata } from '../store/queries/user';
+import { getActiveSession, getUserdata } from '../store/queries/user';
+import { ISettings } from '../types/Settings';
+import { THEME } from '../constants';
 
 
 interface StoreProps {
-  userdata: IUserdata|null;
+  userdata: {userdata: IUserdata|null; settings: ISettings|null};
+  activeSession: any|null;
   topics: ITopic[];
   category: ICategory|null;
+  theme: 'dark'|'light';
   order: 'latest' | 'oldest'
 }
 
@@ -19,15 +23,19 @@ export interface GlobalState extends StoreProps {
     updateCategory: (category: ICategory|null) => Promise<void>;
     updateTopicOrder: (order: 'latest' | 'oldest') => Promise<void>;
     updateUserdata: () => Promise<void>;
+    updateActiveSession: () => Promise<void>;
+    toggleTheme: () => void;
 }
 
 
 export const createGlobalStore = (initProps?: Partial<StoreProps>) => {
     const queryClient = useQueryClient();
     const defaultProps: StoreProps = {
-        userdata: null,
+        userdata: {userdata: null, settings: null},
         topics: [],
+        activeSession: null,
         category: null,
+        theme: window.localStorage.getItem(THEME) as ('dark'|'light') || 'dark',
         order: 'latest'
     }
 
@@ -37,7 +45,7 @@ export const createGlobalStore = (initProps?: Partial<StoreProps>) => {
         ...initProps,
         updateCategory: async(newCategory: ICategory|null) => {
             const res = await queryClient.fetchQuery(getTopics(newCategory, state().order));
-            if(!res.success) throw new Error(res.message);
+            if(!res?.success) throw new Error(res?.message);
             set((state) => ({
                 ...state,
                 category: newCategory,
@@ -46,7 +54,7 @@ export const createGlobalStore = (initProps?: Partial<StoreProps>) => {
         },
         updateTopicOrder: async(newOrder: 'latest' | 'oldest') => {
             const res = await queryClient.fetchQuery(getTopics(state().category, newOrder));
-            if(!res.success) throw new Error(res.message);
+            if(!res?.success) throw new Error(res?.message);
             set((state) => ({
                 ...state,
                 order: newOrder,
@@ -55,12 +63,30 @@ export const createGlobalStore = (initProps?: Partial<StoreProps>) => {
         },
         updateUserdata: async() => {
             const res = await queryClient.fetchQuery(getUserdata());
-            console.log({res});
-            if(!res.success) throw new Error(res.message);
+            if(!res?.success) throw new Error(res?.message);
             set((state) => ({
                 ...state,
                 userdata: res.data
             })); 
+        },
+        updateActiveSession: async() => {
+            const res = await queryClient.fetchQuery(getActiveSession());
+            if(!res?.success) throw new Error(res?.message);
+            console.log({res});
+            set((state) => ({
+                ...state,
+                activeSession: res.data
+            })); 
+        },
+        toggleTheme: () => {
+            let currentTheme = window.localStorage.getItem(THEME);
+            if(!currentTheme) currentTheme = state().theme;
+            let newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            set(state => ({
+                ...state,
+                theme: newTheme as 'light' | 'dark'
+            }))
+            window.localStorage.setItem(THEME, newTheme)
         }
     }))
 }

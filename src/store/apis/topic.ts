@@ -21,7 +21,6 @@ export const createTopic = async (data: ICreateTopic) => {
 
 
 export const getTopics = async(category: Category | null, order: 'latest' | 'oldest') => {
-    console.log({category, order});
     const res = await axios.get(!category ? `/topics?order=${order}` : `/topics?order=${order}&category=${category}`);
     return res?.data;
 }

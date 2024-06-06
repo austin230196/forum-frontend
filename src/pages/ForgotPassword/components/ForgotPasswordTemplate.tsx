@@ -85,6 +85,7 @@ import Logo from "../../../components/Logo";
 import Regex from "../../../utils/Regex";
 import {CircularLoader} from "../../../components";
 import { useForgotPassword } from "../../../store/mutations/user";
+import { LoginForm } from "../../Login/components/LoginTemplate";
 
 
 
@@ -110,107 +111,14 @@ const ForgotPasswordTemplateWrapper = styled.div`
     }
 `;
 
-const ForgotPasswordForm = styled.div`
-    display:flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    gap: 20px;
-    margin-top: 40px;
-
-    >#social__auth {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-
-        > p {
-            font-size: 0.8rem;
-        }
-
-        > div {
-            display: flex;
-            align-items: center;
-            gap: 50px;
-        }
-    }
-
-    > div {
-        width: 100%;
-        display:flex;
-        gap: 5px;
-        flex-direction: column;
-
-        > label {
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        > input {
-            line-height: 2;
-            padding: 4px;
-            outline: none;
-            border: 1px solid ${props => props.theme.secondary.dark};
-            border-radius: 4px;
-            transition: all 0.6s ease-out;
-        }
-
-        > i {
-            display: flex;
-            align-items: center;
-            font-size: 0.7rem;
-            gap: 3px;
-            color: red;
-
-            > svg {
-                font-size: 0.9rem;
-            }
-        }
-    }
-
-    > section {
-        width: 100%;
-
-        > button {
-            width: 100%;
-            background-color: ${props => props.theme.primary.main};
-            border: none;
-            color: ${props => props.theme.secondary.main};
-            padding: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-    }
-
-    > p {
-        width:100%;
-        display: flex;
-        align-items: flex-start;
-        gap: 30px;
-        justify-content: space-between;
-
-        >span {
-            font-size: 0.9rem;
-            display: flex;
-            gap: 5px;
-            > a {
-                color: ${props => props.theme.primary.main};
-                text-decoration: none;
-                font-weight: 600;
-                font-size: 1rem;
-                cursor: pointer;
-            }
-        }
-    }
+const ForgotPasswordForm = styled(LoginForm)`
 `;
 
 const ForgotPasswordTemplateTop = styled.div``;
 
 const AuthHeader = styled.div`
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     > h3 {
         font-size: 1.25rem;
         text-transform: uppercase;

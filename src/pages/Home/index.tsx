@@ -6,8 +6,6 @@ const Home = () => {
     const order = useStore(store as StoreApi<GlobalState>, (state) => state.order);
     const category = useStore(store as StoreApi<GlobalState>, (state) => state.category);
 
-    console.log({category, order, topics});
-
     useEffect(() => {
         console.log("UPDATED");
         (async() => {
@@ -140,6 +138,8 @@ const HomeTop = styled.div`
         border-color: ${props => props.theme.secondary.dark};
         border-radius: 4px;
         font-weight: bold;
+        background-color: ${props => props.theme.secondary.main};
+        color: ${props => props.theme.dark.main};
     }
 
     .home__top_categories {

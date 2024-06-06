@@ -5,6 +5,9 @@ const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
     const location = useLocation();
     const socialLogin = useLoginSocialUser();
     const [submitting, setSubmitting] = useState(false);
+    const [disabled, setDisabled] = useState(false);
+    const [show2FA, setShow2FA] = useState(false);
+    const [email, setEmail] = useState<string|null>(null);
     const [formstate, setFormstate] = useState({
         email: "",
         password: ""
@@ -23,6 +26,7 @@ const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
             const code = urlParams.get("code");
             console.log({code});
             if(code){
+                setDisabled(() => true);
                 if(code === 'redirect_uri_mismatch&error_description'){
                     console.log("REDIRECT URI MISMATCH");
                     navigate("/");
@@ -90,6 +94,16 @@ const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
     }
 
     async function loginUser(data: any){
+        if(data.data.hasOwnProperty("twoFA")){
+            //then run the 2fa input
+            setShow2FA(() => true);
+            setEmail(() => data.data.email);
+            toast(data.message);
+        }else await loginFinally(data);
+    }
+
+
+    async function loginFinally(data: any){
         const userdata = data.data;
         const store = new Store(STORE_KEY);
         await store.set("refreshKey", userdata?.refreshToken);
@@ -115,6 +129,9 @@ const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
             {canClose && (<span>
                 <MdClear onClick={closeModal} />
             </span>)}
+            {
+                show2FA ? <TwoFADialog login={loginFinally} email={email!} /> : null
+            }
             <LoginTemplateTop>
                 <Logo />
             </LoginTemplateTop>
@@ -134,13 +151,13 @@ const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
                 <aside id="social__auth">
                     <p>or login with</p>
                     <div>
-                        <GoogleButton />
-                        <GithubButton />
+                        <GoogleButton disabled={disabled} />
+                        <GithubButton disabled={disabled} />
                     </div>
                 </aside>
                 <section>
                     <button
-                    disabled={submitting || !!feedback.email || !!feedback.password}
+                    disabled={disabled || submitting || !!feedback.email || !!feedback.password}
                     onClick={loginUserHandler}
                     >
                         {
@@ -170,11 +187,16 @@ import GoogleButton from "./GoogleButton";
 import GithubButton from "./GithubButton";
 import { SOCIAL_AUTH_PROVIDER, STORE_KEY } from "../../../constants";
 import Store from "../../../utils/Store";
+import TwoFADialog from "./TwoFADialog";
 
 
 
 type ILoginTemplate = {
     canClose?: boolean
+}
+
+export type IAuthButton = {
+    disabled?: boolean
 }
 
 
@@ -200,7 +222,7 @@ const LoginTemplateWrapper = styled.div`
     }
 `;
 
-const LoginForm = styled.div`
+export const LoginForm = styled.div`
     display:flex;
     flex-direction: column;
     align-items: center;
@@ -271,6 +293,13 @@ const LoginForm = styled.div`
             padding: 10px;
             border-radius: 4px;
             cursor: pointer;
+            opacity: 1;
+
+
+            &:disabled {
+                cursor: not-allowed;
+                opacity: 0.6;
+            }
         }
     }
 

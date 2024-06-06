@@ -106,6 +106,13 @@ const RegisterTemplate = ({canClose=true}: IRegisterTemplate) => {
                     {feedback["password"] && <i><MdInfo /> {feedback["password"]}</i>}
                 </div>
                 <p>Already have an account? <a onClick={showLoginHandler}>Login</a> </p>
+                <aside id="social__auth">
+                    <p>or register with</p>
+                    <div>
+                        <GoogleButton />
+                        <GithubButton />
+                    </div>
+                </aside>
                 <section>
                     <button
                     onClick={registerUserHandler}
@@ -133,6 +140,9 @@ import Regex from "../../../utils/Regex";
 import {CircularLoader} from "../../../components";
 import { useRegisterUser } from "../../../store/mutations/user";
 import { useNavigate } from "react-router-dom";
+import GoogleButton from "../../Login/components/GoogleButton";
+import GithubButton from "../../Login/components/GithubButton";
+import { LoginForm } from "../../Login/components/LoginTemplate";
 
 
 
@@ -163,74 +173,15 @@ const RegisterTemplateWrapper = styled.div`
     }
 `;
 
-const RegisterForm = styled.div`
-    display:flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    gap: 20px;
-    margin-top: 40px;
-
-    > div {
-        width: 100%;
-        display:flex;
-        gap: 5px;
-        flex-direction: column;
-
-        > label {
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        > input {
-            line-height: 2;
-            padding: 4px;
-            outline: none;
-            border: 1px solid ${props => props.theme.secondary.dark};
-            border-radius: 4px;
-            transition: all 0.6s ease-out;
-        }
-
-        > i {
-            display: flex;
-            align-items: center;
-            font-size: 0.7rem;
-            gap: 3px;
-            color: red;
-
-            > svg {
-                font-size: 0.9rem;
-            }
-        }
-    }
-
-    > section {
-        width: 100%;
-
-        > button {
-            width: 100%;
-            background-color: ${props => props.theme.primary.main};
-            border: none;
-            color: ${props => props.theme.secondary.main};
-            padding: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-    }
-
+const RegisterForm = styled(LoginForm)`
     > p {
-        width:100%;
         display: flex;
         align-items: center;
         gap: 10px;
         font-size: 0.9rem;
+        flex-direction: row;
 
         > a {
-            color: ${props => props.theme.primary.main};
-            text-decoration: none;
-            font-size: 1rem;
-            font-weight: 600;
             cursor: pointer;
         }
     }

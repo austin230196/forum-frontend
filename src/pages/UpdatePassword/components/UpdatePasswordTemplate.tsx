@@ -57,9 +57,8 @@ const UpdatePasswordTemplate = () => {
             if(formstate.password !== formstate.confirmPassword) throw new Error('Passwords don\'t match');
             const res = await updatePassword.mutateAsync({token: token!, password: formstate.password});
             console.log({res});
-            const data = res.data;
-            if(!data.success) throw new Error(data.message);
-            toast(data.message, {
+            if(!res?.success) throw new Error(res?.message);
+            toast(res?.message, {
                 type: 'success'
             })
             navigate("/login");
@@ -84,7 +83,6 @@ const UpdatePasswordTemplate = () => {
             <UpdatePasswordForm>
                 <AuthHeader>
                     <h3>Update password</h3>
-                    <p>Enter your new password</p>
                 </AuthHeader>
                 <div>
                     <label>Password</label>
@@ -126,6 +124,7 @@ import Logo from "../../../components/Logo";
 import Regex from "../../../utils/Regex";
 import {CircularLoader} from "../../../components";
 import { useUpdatePassword } from "../../../store/mutations/user";
+import { LoginForm } from "../../Login/components/LoginTemplate";
 
 
 
@@ -151,121 +150,19 @@ const UpdatePasswordTemplateWrapper = styled.div`
     }
 `;
 
-const UpdatePasswordForm = styled.div`
-    display:flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    gap: 20px;
-    margin-top: 40px;
-
-    >#social__auth {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-
-        > p {
-            font-size: 0.8rem;
-        }
-
-        > div {
-            display: flex;
-            align-items: center;
-            gap: 50px;
-        }
-    }
-
-    > div {
-        width: 100%;
-        display:flex;
-        gap: 5px;
-        flex-direction: column;
-
-        > label {
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        > input {
-            line-height: 2;
-            padding: 4px;
-            outline: none;
-            border: 1px solid ${props => props.theme.secondary.dark};
-            border-radius: 4px;
-            transition: all 0.6s ease-out;
-        }
-
-        > i {
-            display: flex;
-            align-items: center;
-            font-size: 0.7rem;
-            gap: 3px;
-            color: red;
-
-            > svg {
-                font-size: 0.9rem;
-            }
-        }
-    }
-
-    > section {
-        width: 100%;
-
-        > button {
-            width: 100%;
-            background-color: ${props => props.theme.primary.main};
-            border: none;
-            color: ${props => props.theme.secondary.main};
-            padding: 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            opacity: 1;
-
-            &:disabled {
-                opacity: 0.6;
-            }
-        }
-    }
-
-    > p {
-        width:100%;
-        display: flex;
-        align-items: flex-start;
-        gap: 30px;
-        justify-content: space-between;
-
-        >span {
-            font-size: 0.9rem;
-            display: flex;
-            gap: 5px;
-            > a {
-                color: ${props => props.theme.primary.main};
-                text-decoration: none;
-                font-weight: 600;
-                font-size: 1rem;
-                cursor: pointer;
-            }
-        }
-    }
+const UpdatePasswordForm = styled(LoginForm)`
 `;
 
 const UpdatePasswordTemplateTop = styled.div``;
 
 const AuthHeader = styled.div`
     gap: 10px;
-    margin-bottom: 20px;
     > h3 {
         font-size: 1.25rem;
         text-transform: uppercase;
         text-align: left;
         width: 100%;
-    }
-
-    >p {
-        font-size: 0.8rem;
+        margin-bottom: 10px;
     }
 `;
 

@@ -28,7 +28,7 @@ const Topic = ({message, category, title, createdAt, creator, replies, _id}: ITo
                 <span style={{backgroundColor: getColor(category)}}></span> {category ?? 'general'}
             </span>
             <TopicLeft>
-                <Avatar height={50} width={50} />
+                <CreatorImage src={creator?.avatar ? creator?.avatar : avatar} />
                 <TopicContent>
                     <h3>{title}</h3>
                     <aside>{creator?.name} started at {new Date(createdAt).toString()}</aside>
@@ -62,9 +62,10 @@ import { IoMdMore } from "react-icons/io";
 import { toast } from "react-toastify";
 
 import { useFollowTopic } from "../../../store/mutations/topic";
-import { CircularLoader, Avatar } from "../../../components";
+import { CircularLoader } from "../../../components";
 import { useState } from "react";
 import { categories } from "../../../components/Sidebar";
+import avatar from "../../../assets/images/avatar.jpeg";
 
 
 type ITopic = {
@@ -79,6 +80,12 @@ type ITopic = {
 
 
 
+
+const CreatorImage = styled.img`
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+`;
 const TopicContent = styled.section`
     display: flex;
     flex-direction: column;
@@ -106,6 +113,8 @@ const TopicWrapper = styled.div`
     cursor: pointer;
     position: relative;
     gap: 40px;
+    background-color: ${props => props.theme.secondary.main};
+    color: ${props => props.theme.dark.main};
 
     @media screen and (max-width: 645px){
         flex-direction: column;
@@ -160,6 +169,7 @@ const TopicRight = styled.div`
         font-size: 0.8rem;
         font-weight: 600;
         cursor: pointer;
+        color: ${props => props.theme.dark.main};
 
         > svg {
             color: ${props => props.theme.info.main}

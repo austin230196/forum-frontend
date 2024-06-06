@@ -2,9 +2,7 @@ const CreateForum = ({closeModal}: ICreateForum) => {
     const isCreating = useRef(false);
     const flag = useRef(true);
     const store = useGlobalContext();
-    console.log({store});
     const userdata = useStore(store as StoreApi<GlobalState>, (s) => s?.userdata);
-    console.log({userdata});
     const navigate = useNavigate();
     const [formstate, setFormstate] = useState({
         title: '',
@@ -70,6 +68,7 @@ const CreateForum = ({closeModal}: ICreateForum) => {
             if(!data.success) throw new Error(data.message);
             toast(data.message);
             closeModal();
+            await store?.getState().updateCategory(null);
         }catch(e: any){
             toast(e.message, {type: 'error'});
         }finally {
@@ -165,6 +164,7 @@ const CreateForumForm = styled.div`
         > label {
             font-size: 0.85rem;
             font-weight: 600;
+            color: ${props => props.theme.dark.main};
         }
 
         > input, select, textarea {
@@ -172,6 +172,8 @@ const CreateForumForm = styled.div`
             padding: 4px;
             outline: none;
             border: 1px solid ${props => props.theme.secondary.dark};
+            background-color: ${props => props.theme.secondary.main};
+            color: ${props => props.theme.dark.main};
             border-radius: 4px;
             transition: all 0.6s ease-out;
         }
@@ -236,7 +238,8 @@ const CreateForumWrapper = styled.div`
         position: absolute;
         top: 20px;
         right: 20px;
-        cursor: pointer
+        cursor: pointer;
+        color: ${props => props.theme.dark.main};
     }
 `;
 

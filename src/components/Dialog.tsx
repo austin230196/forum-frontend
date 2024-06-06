@@ -2,7 +2,8 @@ const Dialog = ({children}: {children: ReactNode}) => {
     return (
         <DialogBackdrop style={{
             display: 'flex',
-            alignItems: 'flex-start'
+            alignItems: 'center',
+            justifyContent: 'center'
         }}>
             <DialogWrapper>
                 {children}
@@ -22,7 +23,7 @@ import Backdrop from "./Backdrop";
 const DialogBackdrop = styled(Backdrop)``;
 
 const DialogWrapper = styled.div`
-    width: min(100% - 0.5rem, 600px);
+    width: min(100% - 0.5rem, 400px);
     border-radius: 8px;
     padding: 20px;
     margin-inline: auto;

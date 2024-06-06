@@ -35,7 +35,7 @@ export const logout = async () => {
 
 
 export const forgotPassword = async (email: string) => {
-    return (await axios.post("/user/forgot-password", JSON.stringify({email}), {
+    return (await axios.post("/user/forgot-password", {email}, {
         headers: {
             "Content-Type": "application/json"
         }
@@ -44,11 +44,24 @@ export const forgotPassword = async (email: string) => {
 
 
 export const updatePassword = async (password: string, token: string) => {
-    return (await axios.post("/user/update-password", JSON.stringify({newPassword: password, token}), {
+    const res = await axios.post("/user/update-password", {newPassword: password, token}, {
         headers: {
             "Content-Type": "application/json"
         }
-    }))
+    });
+    return res?.data;
+}
+
+
+export const changePassword = async (oldPassword: string, newPassword: string) => {
+    const token = await store.get("accessKey");
+    const res = await axios.post("/user/change-password", {newPassword, oldPassword}, {
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        }
+    })
+    return res?.data;
 }
 
 
@@ -62,7 +75,38 @@ export const loginSocialUser = async(provider: 'google'|'github', code: string) 
 }
 
 export const get2FAQrCode = async() => {
-    const res = await axios.get("/user/setup/2fa");
+    const token = await store.get("accessKey");
+    const res = await axios.get("/user/2fa/setup", {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
+    return res?.data;
+}
+
+export const verify2FACode = async(email: string, code: string) => {
+    const res = await axios.post("/user/2fa/verify", {email, code}, {
+    });
+    return res?.data;
+}
+
+export const disable2FA = async() => {
+    const token = await store.get("accessKey");
+    const res = await axios.get("/user/2fa/disable", {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
+    return res?.data;
+}
+
+export const complete2FASetup = async(code: string) => {
+    const token = await store.get("accessKey");
+    const res = await axios.post("/user/2fa/setup/complete", {code}, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
     return res?.data;
 }
 
@@ -84,6 +128,18 @@ export const uploadFile = async(filesize: number, filename: string, file: ArrayB
 export const getUserdata = async() => {
     const token = await store.get("accessKey");
     const res = await axios.get("/user", {
+        headers: {
+            "Authorization": `Bearer ${token}`,
+        }
+    })
+    return res?.data;
+}
+
+
+
+export const getActiveSession = async() => {
+    const token = await store.get("accessKey");
+    const res = await axios.get("/sessions/active", {
         headers: {
             "Authorization": `Bearer ${token}`,
         }

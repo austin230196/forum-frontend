@@ -1,12 +1,24 @@
 
 const Profile = () => {
     const store = useGlobalContext();
-    const userdata = useStore(store as StoreApi<GlobalState>, (state) => state?.userdata);
+    const userdata = useStore(store as StoreApi<GlobalState>, (state) => state?.userdata?.userdata);
     const inputRef = useRef<HTMLInputElement>(null);
     const [preview, setPreview] = useState<string|null>(null);
     const [file, setFile] = useState<File|null>(null);
     const [showSettings, setShowSettings] = useState(false);
     const uploadFile = useUploadFile();
+    const session = useStore(store as StoreApi<GlobalState>, (state) => state?.activeSession);
+
+
+    useEffect(() => {
+        (async() => {
+            try{
+                await store?.getState().updateActiveSession();
+            }catch(e: any){
+                toast(e.message, {type: 'error'})
+            }
+        })()
+    }, [])
 
     console.log({userdata});
     function triggerUpload(){
@@ -69,20 +81,40 @@ const Profile = () => {
                         </section>
                         <h3>{userdata?.name}</h3>
                     </ProfileInfo>
-                    <ProfileForm>
-                        <FormContainer>
-                            <label>Account Type</label>
-                            <input type="text" value={userdata?.accountType?.toLocaleUpperCase()} readOnly />
-                        </FormContainer>
-                        <FormContainer>
-                            <label>Your Email</label>
-                            <input type="email" value={userdata?.email} readOnly />
-                        </FormContainer>
-                        <FormContainer>
-                            <label>Phone Number</label>
-                            <input type="text" value="(214) 9803 2345" readOnly />
-                        </FormContainer>
-                    </ProfileForm>
+                    <ProfileTile>
+                        <h4>Profile Information</h4>
+                        <ProfileForm>
+                            <FormContainer>
+                                <label>Account Type</label>
+                                <input type="text" value={userdata?.accountType?.toLocaleUpperCase()} readOnly />
+                            </FormContainer>
+                            <FormContainer>
+                                <label>Your Email</label>
+                                <input type="email" value={userdata?.email} readOnly />
+                            </FormContainer>
+                            <FormContainer>
+                                <label>Mobile</label>
+                                <input type="text" value="(214) 9803 2345" readOnly />
+                            </FormContainer>
+                        </ProfileForm>
+                    </ProfileTile>
+                    <ProfileTile>
+                        <h4>Account Activity</h4>
+                        <ProfileActivities>
+                            <ProfileActivity>
+                                <b>Last login time:</b> <span>{`${(new Date(session?.updatedAt)).toLocaleDateString()} ${(new Date(session?.updatedAt)).toLocaleTimeString()}`}</span>
+                            </ProfileActivity>
+                            <ProfileActivity>
+                                <b>Login device:</b> <span><AiOutlineMobile /> {session?.device?.device?.brand + ' ' + session?.device?.device?.type}</span>
+                            </ProfileActivity>
+                            <ProfileActivity>
+                                <b>Browser:</b> <span><AiOutlineGlobal /> {session?.device?.client?.name}</span>
+                            </ProfileActivity>
+                            <ProfileActivity>
+                                <b>OS:</b> <span>{session?.device?.os?.name}</span>
+                            </ProfileActivity>
+                        </ProfileActivities>
+                    </ProfileTile>
                 </ProfileLayout>
             </ProfileWrapper>
         </MainLayout>
@@ -100,13 +132,49 @@ import { FaFileUpload } from "react-icons/fa";
 import MainLayout from "../../layout/MainLayout"
 import { useGlobalContext } from "../../contexts/GlobalContext";
 import avatar from "../../assets/images/avatar.jpeg";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useUploadFile } from "../../store/mutations/user";
 import { StoreApi, useStore } from "zustand";
 import { GlobalState } from "../../contexts/store";
 import SettingsModal from "./components/SettingsModal";
+import { toast } from "react-toastify";
+import { AiOutlineGlobal, AiOutlineMobile } from "react-icons/ai";
 
 
+
+
+const ProfileActivities = styled.ul`
+    list-style-type: none;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: ${props => props.theme.dark.main};
+`
+const ProfileActivity = styled.li`
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    > span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+`
+const ProfileTile = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-block: 20px;
+
+    > h4 {
+        color: ${props => props.theme.dark.light};
+        text-transform: uppercase;
+    }
+`;
 const ProfileWrapper = styled.div`
     width; 100%;
     height: 100%;
@@ -159,6 +227,7 @@ const ProfileInfo = styled.div`
     align-items: center;
     justify-content: center;
     gap: 20px;
+    color: ${props => props.theme.dark.main};
 
     > h3 {
         text-transform: uppercase;
@@ -206,13 +275,13 @@ const ProfileAvatar = styled.img`
 `;
 
 const ProfileForm = styled.div`
-    margin-block: 40px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 20px;
     width: min(100% - 0.25rem, 450px);
+    padding-left: 20px;
 `;
 
 const FormContainer = styled.div`
@@ -228,7 +297,8 @@ const FormContainer = styled.div`
 
     > input {
         width: 100%;
-        // border: none;
+        color: ${props => props.theme.dark.main};
+        background-color: ${props => props.theme.secondary.main};
         padding: 4px;
         border-radius: 8px;
         line-height: 2;

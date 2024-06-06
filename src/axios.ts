@@ -11,7 +11,7 @@ const instance = axios.create({
 
 instance.interceptors.response.use(async (res: AxiosResponse) => {
 
-    if(res.data?.message === 'jwt expired' || res.status === 401){
+    if(res.data?.message === 'jwt expired'){
         console.log("JWT EXPIRED AGAIN");
         //get refreshToken
         let store = new Store(STORE_KEY);
@@ -32,6 +32,9 @@ instance.interceptors.response.use(async (res: AxiosResponse) => {
                 window.localStorage.removeItem(STORE_KEY);
                 window.location.href = "/login";
             }
+        }else {
+            window.localStorage.removeItem(STORE_KEY);
+            window.location.href = "/login";
         }
     }
     return res;
