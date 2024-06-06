@@ -1,6 +1,6 @@
 const ForgotPassword = ({}) => (
     <ForgotPasswordWrapper>
-        <ForgotPasswordTemplate />
+        <ForgotPasswordTemplate main />
     </ForgotPasswordWrapper>
 )
 
@@ -8,12 +8,11 @@ const ForgotPassword = ({}) => (
 import styled from "styled-components";
 
 import ForgotPasswordTemplate from "./components/ForgotPasswordTemplate";
+import { LoginWrapper } from "../Login";
 
 
 
-const ForgotPasswordWrapper = styled.div`
-    // background-color: ${props => props.theme.secondary.dark};
-`;
+const ForgotPasswordWrapper = styled(LoginWrapper)``;
 
 
 export default ForgotPassword;

@@ -1,6 +1,6 @@
 const Register = ({}) => (
     <RegisterWrapper>
-        <RegisterTemplate canClose={false} />
+        <RegisterTemplate main canClose={false} />
     </RegisterWrapper>
 )
 
@@ -8,11 +8,10 @@ const Register = ({}) => (
 import styled from "styled-components";
 
 import RegisterTemplate from "./components/RegisterTemplate";
+import { LoginWrapper } from "../Login";
 
 
-const RegisterWrapper = styled.div`
-    // background-color: ${props => props.theme.secondary.dark};
-`;
+const RegisterWrapper = styled(LoginWrapper)``;
 
 
 export default Register;

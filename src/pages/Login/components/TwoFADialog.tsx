@@ -136,6 +136,8 @@ const CodeInput = styled.input`
     border: 2px solid ${props => props.theme.dark.main};
     border-radius: 8px;
     outline: none;
+    background-color: ${props => props.theme.secondary.light};
+    color: ${props => props.theme.dark.main};
 
     &:focus {
         border: 3px solid ${props => props.theme.info.main}
@@ -146,6 +148,7 @@ const Wrapper = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    color: ${props => props.theme.dark.main};
 
     > span {
         font-size: 4rem;

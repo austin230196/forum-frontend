@@ -2,7 +2,7 @@ const CreateForum = ({closeModal}: ICreateForum) => {
     const isCreating = useRef(false);
     const flag = useRef(true);
     const store = useGlobalContext();
-    const userdata = useStore(store as StoreApi<GlobalState>, (s) => s?.userdata);
+    const userdata = useStore(store as StoreApi<GlobalState>, (s) => s?.userdata?.userdata);
     const navigate = useNavigate();
     const [formstate, setFormstate] = useState({
         title: '',

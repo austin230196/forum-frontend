@@ -1,4 +1,4 @@
-const UpdatePasswordTemplate = () => {
+const UpdatePasswordTemplate = ({main=false}: {main: boolean}) => {
     const [submitting, setSubmitting] = useState(false);
     const flag = useRef(true);
     const navigate = useNavigate();
@@ -75,7 +75,7 @@ const UpdatePasswordTemplate = () => {
 
 
     return (
-        <UpdatePasswordTemplateWrapper>
+        <UpdatePasswordTemplateWrapper $main={main}>
             <UpdatePasswordTemplateTop>
                 <Logo />
             </UpdatePasswordTemplateTop>
@@ -128,11 +128,11 @@ import { LoginForm } from "../../Login/components/LoginTemplate";
 
 
 
-const UpdatePasswordTemplateWrapper = styled.div`
+const UpdatePasswordTemplateWrapper = styled.div<{$main: boolean}>`
     background-color: ${props => props.theme.secondary.main};
     width: min(100% - 0.5rem, 500px);
     margin-inline: auto;
-    margin-top: 200px;
+    margin-top: ${props => props.$main ? '0px' : '200px'};
     padding: 20px;
     border-radius: 8px;
     position: relative;
@@ -157,6 +157,7 @@ const UpdatePasswordTemplateTop = styled.div``;
 
 const AuthHeader = styled.div`
     gap: 10px;
+    color: ${props => props.theme.dark.main};
     > h3 {
         font-size: 1.25rem;
         text-transform: uppercase;

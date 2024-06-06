@@ -4,7 +4,7 @@ const UpdatePassword = () => {
     console.log({search});
     return(
         <UpdatePasswordWrapper>
-            <UpdatePasswordTemplate />
+            <UpdatePasswordTemplate main />
         </UpdatePasswordWrapper>
     )
 }
@@ -15,9 +15,10 @@ import { useLocation } from "react-router-dom";
 import styled from "styled-components"
 
 import UpdatePasswordTemplate from "./components/UpdatePasswordTemplate";
+import { LoginWrapper } from "../Login";
 
 
-const UpdatePasswordWrapper = styled.div``;
+const UpdatePasswordWrapper = styled(LoginWrapper)``;
 
 
 

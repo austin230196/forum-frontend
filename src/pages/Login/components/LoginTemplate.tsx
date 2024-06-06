@@ -1,4 +1,4 @@
-const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
+const LoginTemplate = ({canClose=true, main=false}: ILoginTemplate) => {
     const flag = useRef(true);
     const login = useLoginUser();
     const navigate = useNavigate();
@@ -125,7 +125,7 @@ const LoginTemplate = ({canClose=true}: ILoginTemplate) => {
         }
     }
     return (
-        <LoginTemplateWrapper>
+        <LoginTemplateWrapper $main={main}>
             {canClose && (<span>
                 <MdClear onClick={closeModal} />
             </span>)}
@@ -192,7 +192,8 @@ import TwoFADialog from "./TwoFADialog";
 
 
 type ILoginTemplate = {
-    canClose?: boolean
+    canClose?: boolean;
+    main?: boolean;
 }
 
 export type IAuthButton = {
@@ -200,11 +201,11 @@ export type IAuthButton = {
 }
 
 
-const LoginTemplateWrapper = styled.div`
+const LoginTemplateWrapper = styled.div<{$main: boolean}>`
     background-color: ${props => props.theme.secondary.main};
     width: min(100% - 0.5rem, 500px);
     margin-inline: auto;
-    margin-top: 200px;
+    margin-top: ${props => props.$main ? '0px' : '200px'};
     padding: 20px;
     border-radius: 8px;
     position: relative;
@@ -237,6 +238,7 @@ export const LoginForm = styled.div`
         flex-direction: column;
         align-items: center;
         gap: 15px;
+        color: ${props => props.theme.dark.main};
 
         > p {
             font-size: 0.8rem;
@@ -258,6 +260,7 @@ export const LoginForm = styled.div`
         > label {
             font-size: 0.85rem;
             font-weight: 600;
+            color: ${props => props.theme.dark.main};
         }
 
         > input {
@@ -267,6 +270,8 @@ export const LoginForm = styled.div`
             border: 1px solid ${props => props.theme.secondary.dark};
             border-radius: 4px;
             transition: all 0.6s ease-out;
+            background-color: ${props => props.theme.secondary.light};
+            color: ${props => props.theme.dark.main};
         }
 
         > i {
@@ -284,12 +289,13 @@ export const LoginForm = styled.div`
 
     > section {
         width: 100%;
+        
 
         > button {
             width: 100%;
             background-color: ${props => props.theme.primary.main};
             border: none;
-            color: ${props => props.theme.secondary.main};
+            color: ${props => props.theme.dark.main};
             padding: 10px;
             border-radius: 4px;
             cursor: pointer;
@@ -309,6 +315,7 @@ export const LoginForm = styled.div`
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
+        color: ${props => props.theme.dark.main};
 
         >span {
             font-size: 0.9rem;

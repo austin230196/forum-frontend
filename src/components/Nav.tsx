@@ -1,4 +1,5 @@
 const Nav = ({showLogo=false}: INav) => {
+    const queryClient = new QueryClient();
     const [showDropdown, setShowDropDown] = useState(false);
     const store = useGlobalContext();
     const userdata = useStore(store as StoreApi<GlobalState>, (state) => state?.userdata?.userdata);
@@ -6,6 +7,9 @@ const Nav = ({showLogo=false}: INav) => {
     const [loading, setLoading] = useState(true);
     const theme = useStore(store as StoreApi<GlobalState>, (state) => state.theme);
     const navigate = useNavigate();
+    const [search, setSearch] = useState('');
+    const clearer = useRef<number|null>(null);
+    const [searchResults, setSearchResults] = useState<ITopic[]|null>(null);
 
     useEffect(() => {
         (async() => {
@@ -18,6 +22,28 @@ const Nav = ({showLogo=false}: INav) => {
             }
         })()
     }, [])
+
+    async function searchTopicsHandler(searchStr: string){
+        try{
+            console.log({searchStr});
+            const res = await queryClient.fetchQuery(searchTopics(searchStr));
+            console.log({res});
+            if(!res?.success) throw new Error(res?.message);
+            setSearchResults(() => res?.data);
+        }catch(e: any){
+            toast(e.message, {type: 'error'})
+        }
+    }
+
+    function changeHandler(e: ChangeEvent<HTMLInputElement>){
+        setSearch(() => e.target.value);
+        if(!clearer.current){
+            clearer.current = setTimeout(async() => {
+                await searchTopicsHandler(e.target.value);
+                clearer.current = null;
+            }, 2000);
+        }
+    }
 
     function toggleThemeHandler(){
         store?.getState().toggleTheme();
@@ -51,7 +77,27 @@ const Nav = ({showLogo=false}: INav) => {
             {showLogo ? <Logo /> : null}
             <SearchInput>
                 <FiSearch />
-                <input type="text" placeholder="Search forum.." />
+                <input type="text" placeholder="Search forum.." value={search} onChange={changeHandler} />
+                {
+                    searchResults !== null ? searchResults?.length ? 
+                    (
+                        <SearchResults>
+                            {
+                                searchResults?.map((t, i) => (
+                                    <SearchResult key={i}>
+                                        <p>{t?.title}</p>
+                                        <span>{t?.message?.substring(0, 70) + '....'}</span>
+                                    </SearchResult>
+                                ))
+                            }
+                        </SearchResults>
+                    ) : 
+                    (
+                        <SearchResults>
+                            <h4>No results.</h4>
+                        </SearchResults>
+                    ) : null
+                }
             </SearchInput>
             <NavRight>
                 {/* <Bell>
@@ -100,7 +146,7 @@ import { SiGnuprivacyguard } from "react-icons/si";
 import { FiSearch } from "react-icons/fi";
 import { CgProfile } from "react-icons/cg";
 import { RiLogoutCircleLine, RiLoginCircleLine } from "react-icons/ri";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 import Avatar from "./Avatar"
@@ -114,12 +160,54 @@ import { STORE_KEY } from "../constants";
 import { StoreApi, useStore } from "zustand";
 import { GlobalState } from "../contexts/store";
 import { BiMoon, BiSun } from "react-icons/bi";
+import { QueryClient } from "@tanstack/react-query";
+import { searchTopics } from "../store/queries/topic";
+import { ITopic } from "../types/Topic";
 
 type INav = {
     showLogo: Boolean
 }
 
 
+
+const SearchResult = styled.div`
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid ${props => props.theme.secondary.dark};
+
+    &:hover {
+        background-color: ${props => props.theme.secondary.light};
+    }
+    
+    > p {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    > span {
+        font-size: 0.7rem;
+    }
+`;
+const SearchResults = styled.div`
+    position: absolute;
+    top: 45px;
+    right: 0;
+    left: 0;
+    z-index: 1200;
+    background-color: ${props => props.theme.secondary.main};
+    color: ${props => props.theme.dark.main};
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-height: 25vh;
+    overflow-y: scroll;
+
+    > h4 {
+        text-align: center;
+        margin-block: 10px;
+    }
+`;
 const ThemeController = styled.span`
     font-size: 2rem;
     cursor: pointer;
@@ -138,6 +226,7 @@ const SearchInput = styled.div`
     display: flex;
     align-items: center;
     gap: 10px;
+    position: relative;
     width: 60%;
     padding: 5px;
     border-radius: 4px;

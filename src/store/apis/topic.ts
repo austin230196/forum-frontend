@@ -20,8 +20,14 @@ export const createTopic = async (data: ICreateTopic) => {
 }
 
 
-export const getTopics = async(category: Category | null, order: 'latest' | 'oldest') => {
-    const res = await axios.get(!category ? `/topics?order=${order}` : `/topics?order=${order}&category=${category}`);
+export const getTopics = async(category: Category | null, order: 'latest' | 'oldest', page: number) => {
+    const res = await axios.get(!category ? `/topics?order=${order}&page=${page}` : `/topics?order=${order}&category=${category}&page=${page}`);
+    return res?.data;
+}
+
+
+export const searchAllTopics = async(searchStr: string) => {
+    const res = await axios.get(`/topics/search?search=${searchStr}`);
     return res?.data;
 }
 

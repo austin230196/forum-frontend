@@ -89,6 +89,9 @@ const Home = () => {
                         topics?.map((data: any, i: number) => (<Topic key={i} {...data} />))
                         : <div className="empty__topics">No topics found</div>
                     }
+                    <Stack spacing={2} width="100%">
+                        <Pagination count={10} color="primary" />
+                    </Stack>
                 </HomeBody>
             </HomeWrapper>
         </MainLayout>
@@ -111,6 +114,7 @@ import { StoreApi, useStore } from "zustand";
 import { GlobalState } from "../../contexts/store";
 import ICategory from "../../types/Category";
 import { toast } from "react-toastify";
+import { Pagination, Stack } from "@mui/material";
 
 
 

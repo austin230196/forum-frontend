@@ -1,4 +1,4 @@
-const RegisterTemplate = ({canClose=true}: IRegisterTemplate) => {
+const RegisterTemplate = ({canClose=true, main=false}: IRegisterTemplate) => {
     const [submitting, setSubmitting] = useState(false);
     const [formstate, setFormstate] = useState({
         email: "",
@@ -81,7 +81,7 @@ const RegisterTemplate = ({canClose=true}: IRegisterTemplate) => {
     }
 
     return (
-        <RegisterTemplateWrapper>
+        <RegisterTemplateWrapper $main={main}>
             {canClose && (<span>
                 <MdClear onClick={closeModal} />
             </span>)}
@@ -147,17 +147,18 @@ import { LoginForm } from "../../Login/components/LoginTemplate";
 
 
 type IRegisterTemplate = {
-    canClose?: boolean
+    canClose?: boolean;
+    main?: boolean;
 }
 
 
-const RegisterTemplateWrapper = styled.div`
+const RegisterTemplateWrapper = styled.div<{$main: boolean}>`
     background-color: ${props => props.theme.secondary.main};
     width: min(100% - 0.5rem, 500px);
     margin-inline: auto;
     padding: 20px;
     border-radius: 8px;
-    margin-top: 200px;
+    margin-top: ${props => props.$main ? '0px' : '200px'};
     position: relative;
     box-shadow: 0px 2px 5px #ccc;
     display:flex;

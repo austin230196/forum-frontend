@@ -15,6 +15,8 @@ interface StoreProps {
   activeSession: any|null;
   topics: ITopic[];
   category: ICategory|null;
+  page: number;
+  limit: number;
   theme: 'dark'|'light';
   order: 'latest' | 'oldest'
 }
@@ -22,6 +24,7 @@ interface StoreProps {
 export interface GlobalState extends StoreProps {
     updateCategory: (category: ICategory|null) => Promise<void>;
     updateTopicOrder: (order: 'latest' | 'oldest') => Promise<void>;
+    updateTopicPage: (page: number) => Promise<void>;
     updateUserdata: () => Promise<void>;
     updateActiveSession: () => Promise<void>;
     toggleTheme: () => void;
@@ -33,6 +36,8 @@ export const createGlobalStore = (initProps?: Partial<StoreProps>) => {
     const defaultProps: StoreProps = {
         userdata: {userdata: null, settings: null},
         topics: [],
+        page: 1,
+        limit: 10,
         activeSession: null,
         category: null,
         theme: window.localStorage.getItem(THEME) as ('dark'|'light') || 'dark',
@@ -44,7 +49,7 @@ export const createGlobalStore = (initProps?: Partial<StoreProps>) => {
         ...defaultProps,
         ...initProps,
         updateCategory: async(newCategory: ICategory|null) => {
-            const res = await queryClient.fetchQuery(getTopics(newCategory, state().order));
+            const res = await queryClient.fetchQuery(getTopics(newCategory, state().order, state().page));
             if(!res?.success) throw new Error(res?.message);
             set((state) => ({
                 ...state,
@@ -53,11 +58,20 @@ export const createGlobalStore = (initProps?: Partial<StoreProps>) => {
             }));
         },
         updateTopicOrder: async(newOrder: 'latest' | 'oldest') => {
-            const res = await queryClient.fetchQuery(getTopics(state().category, newOrder));
+            const res = await queryClient.fetchQuery(getTopics(state().category, newOrder, state().page));
             if(!res?.success) throw new Error(res?.message);
             set((state) => ({
                 ...state,
                 order: newOrder,
+                topics: res.data
+            })); 
+        },
+        updateTopicPage: async(newPage) => {
+            const res = await queryClient.fetchQuery(getTopics(state().category, state().order, newPage));
+            if(!res?.success) throw new Error(res?.message);
+            set((state) => ({
+                ...state,
+                page: newPage,
                 topics: res.data
             })); 
         },

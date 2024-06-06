@@ -1,5 +1,4 @@
 const Sidebar = () => {
-    // const showDiscussion = useRef(false);
     const [showCreate, setShowCreate] = useState(false);
     const location = useLocation();
 

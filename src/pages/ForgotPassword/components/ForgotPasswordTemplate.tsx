@@ -1,9 +1,8 @@
-const ForgotPasswordTemplate = () => {
-    const isSubmitting = useRef(false);
+const ForgotPasswordTemplate = ({main=false}: {main?: boolean}) => {
     const navigate = useNavigate();
-    // const {dispatch} = useGlobalContext();
     const [email, setEmail] = useState("");
     const [feedback, setFeedback] = useState<string|null>(null);
+    const [submitting, setSubmitting] = useState(false);
     const forgotPassword = useForgotPassword();
 
     function changeHandler(e: ChangeEvent<HTMLInputElement>): void{
@@ -17,7 +16,7 @@ const ForgotPasswordTemplate = () => {
     }
 
     async function sendForgotPasswordHandler() {
-        isSubmitting.current = true;
+        setSubmitting(() => true);
         try{
             if(!email) return;
             const res = await forgotPassword.mutateAsync(email);
@@ -31,7 +30,7 @@ const ForgotPasswordTemplate = () => {
         }catch(e: any){
             toast(e.message, {type: 'error'});
         }finally {
-            isSubmitting.current = false;
+            setSubmitting(() => false);
         }
     }
 
@@ -41,7 +40,7 @@ const ForgotPasswordTemplate = () => {
 
 
     return (
-        <ForgotPasswordTemplateWrapper>
+        <ForgotPasswordTemplateWrapper $main={main}>
             <ForgotPasswordTemplateTop>
                 <Logo />
             </ForgotPasswordTemplateTop>
@@ -61,9 +60,10 @@ const ForgotPasswordTemplate = () => {
                 <section>
                     <button
                     onClick={sendForgotPasswordHandler}
+                    disabled={submitting || !!feedback || !email}
                     >
                         {
-                            isSubmitting.current ? <CircularLoader size={20} /> : <span>Send email</span>
+                            submitting ? <CircularLoader size={20} /> : <span>Send email</span>
                         }
                     </button>
                 </section>
@@ -78,7 +78,7 @@ const ForgotPasswordTemplate = () => {
 import styled from "styled-components";
 import { MdInfo } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import {toast} from "react-toastify";
 
 import Logo from "../../../components/Logo";
@@ -89,11 +89,11 @@ import { LoginForm } from "../../Login/components/LoginTemplate";
 
 
 
-const ForgotPasswordTemplateWrapper = styled.div`
+const ForgotPasswordTemplateWrapper = styled.div<{$main: boolean}>`
     background-color: ${props => props.theme.secondary.main};
     width: min(100% - 0.5rem, 500px);
     margin-inline: auto;
-    margin-top: 200px;
+    margin-top: ${props => props.$main ? '0px' : '200px'};
     padding: 20px;
     border-radius: 8px;
     position: relative;
@@ -119,6 +119,7 @@ const ForgotPasswordTemplateTop = styled.div``;
 const AuthHeader = styled.div`
     gap: 10px;
     margin-bottom: 10px;
+    color: ${props => props.theme.dark.main};
     > h3 {
         font-size: 1.25rem;
         text-transform: uppercase;
