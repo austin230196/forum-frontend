@@ -32,9 +32,9 @@ export const searchAllTopics = async(searchStr: string) => {
 }
 
 
-export const toggleFollowTopic = async(data: {topicId: string, userId: string}) => {
+export const toggleFollowTopic = async(topicId: string) => {
     const token = await store.get("accessKey");
-    return (await axios.post("/topics/follow/toggle", JSON.stringify(data), {
+    return (await axios.post("/topics/follow/toggle", {topicId}, {
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`

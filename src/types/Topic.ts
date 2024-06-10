@@ -20,4 +20,5 @@ export type ITopic = {
     message: string;
     replies: IReply[];
     followers: IFollower[];
+    createdAt: Date;
 }

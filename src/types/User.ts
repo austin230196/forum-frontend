@@ -18,5 +18,5 @@ export type IUserdata = {
     email: string;
     name: string;
     updatedAt: string;
-    id: string
+    _id: string
 }

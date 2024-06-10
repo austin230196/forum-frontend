@@ -14,7 +14,7 @@ export const getTopics = (category: Category|null, order: 'latest' | 'oldest', p
 
 export const searchTopics = (searchStr: string) => {
     return queryOptions({
-        queryKey: ['search-topics'],
+        queryKey: ['search-topics', searchStr],
         queryFn: async () => await searchAllTopics(searchStr)
     })
 }

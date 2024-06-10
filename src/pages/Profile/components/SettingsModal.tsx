@@ -63,6 +63,23 @@ const SettingsModal = ({close}: {close: () => void}) => {
                     }
                 </SettingsControls>
             </SettingsTile>
+            <SettingsTile>
+                <h5>Notifications</h5>
+                <SettingsControls>
+                    <SettingsControl>
+                        <p>Promotions</p>
+                        <span>
+                            <Switch checked={false} disabled inputProps={{ 'aria-label': 'controlled' }} />
+                        </span>
+                    </SettingsControl>
+                    <SettingsControl>
+                        <p>Topics</p>
+                        <span>
+                            <Switch checked={false} disabled inputProps={{ 'aria-label': 'controlled' }} />
+                        </span>
+                    </SettingsControl>
+                </SettingsControls>
+            </SettingsTile>
         </Modal>
     )
 }

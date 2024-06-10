@@ -12,9 +12,9 @@ export const useCreateTopic = () => {
 }
 
 
-export const useFollowTopic = () => {
+export const useToggleFollowTopic = () => {
     return useMutation({
-        mutationFn: async (data: {topicId: string, userId: string}) => await toggleFollowTopic(data),
-        mutationKey: ['follow-topic']
+        mutationFn: async (topicId: string) => await toggleFollowTopic(topicId),
+        mutationKey: ['toggle-follow-topic']
     })
 }

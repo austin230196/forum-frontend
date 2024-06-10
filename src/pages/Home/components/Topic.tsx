@@ -1,18 +1,21 @@
-const Topic = ({message, category, title, createdAt, creator, replies, _id}: ITopic) => {
+const Topic = ({message, category, title, createdAt, creator, replies, _id, followers, isCreator}: ITopic & {isCreator: boolean}) => {
     const [following, setFollowing] = useState<boolean>(false);
+    const store = useGlobalContext();
+    const navigate = useNavigate();
+    const toggleFollowMutaion = useToggleFollowTopic();
 
-    const followMutaion = useFollowTopic();
+
     function getColor(category: string='general'): string{
         let found = categories.find(c => c.name === category);
         return found ? found.color : 'yellow';
     }
 
 
-    async function followTopicHandler(_: any, _id: string){
+    async function toggleFollowTopicHandler(_: any, _id: string){
         setFollowing(() => true);
         try{
-            const res = await followMutaion.mutateAsync({topicId: _id, userId: "65ff59c3978d6b964748d744"});
-            console.log({res});
+            const res = await toggleFollowMutaion.mutateAsync(_id);
+            await store?.getState().reloadTopics();
         }catch(e: any){
             toast(e.message, {
                 type: 'error'
@@ -22,8 +25,13 @@ const Topic = ({message, category, title, createdAt, creator, replies, _id}: ITo
         }
     }
 
+
+    function gotoTopicHandler(){
+        navigate(_id);
+    }
+
     return (
-        <TopicWrapper>
+        <TopicWrapper onClick={gotoTopicHandler}>
             <span style={{borderColor: getColor(category)}}> 
                 <span style={{backgroundColor: getColor(category)}}></span> {category ?? 'general'}
             </span>
@@ -41,14 +49,20 @@ const Topic = ({message, category, title, createdAt, creator, replies, _id}: ITo
                         <FaComment />  {replies?.length}
                     </span>
                     <span>
-                        <IoMdMore />
+                        <FaUserPlus /> {followers?.length}
                     </span>
                 </TopicRightTop>
-                <button                                
-                onClick={e => followTopicHandler(e, _id)}>
-                    <FaStar />
-                    {following ? <CircularLoader size={15} /> : <span>Follow</span>}
-                </button>
+                {
+                    isCreator ? null : 
+                    (
+                        <button        
+                        disabled={isCreator}                        
+                        onClick={e => toggleFollowTopicHandler(e, _id)}>
+                            <FaStar />
+                            {following ? <CircularLoader size={15} /> : <span>Follow</span>}
+                        </button>
+                    )
+                }
             </TopicRight>
         </TopicWrapper>
     )
@@ -58,25 +72,18 @@ const Topic = ({message, category, title, createdAt, creator, replies, _id}: ITo
 
 import styled from "styled-components";
 import { FaComment, FaStar } from "react-icons/fa";
-import { IoMdMore } from "react-icons/io";
+import { FaUserPlus } from "react-icons/fa6";
+
 import { toast } from "react-toastify";
 
-import { useFollowTopic } from "../../../store/mutations/topic";
+import { useToggleFollowTopic } from "../../../store/mutations/topic";
 import { CircularLoader } from "../../../components";
 import { useState } from "react";
 import { categories } from "../../../components/Sidebar";
 import avatar from "../../../assets/images/avatar.jpeg";
-
-
-type ITopic = {
-    message: string; 
-    title: string;
-    category: string;
-    creator: any;
-    createdAt: Date;
-    replies: any[];
-    _id: string;
-}
+import { ITopic } from "../../../types/Topic";
+import { useGlobalContext } from "../../../contexts/GlobalContext";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -170,6 +177,12 @@ const TopicRight = styled.div`
         font-weight: 600;
         cursor: pointer;
         color: ${props => props.theme.dark.main};
+        opacity: 1;
+
+        &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed
+        }
 
         > svg {
             color: ${props => props.theme.info.main}
@@ -196,11 +209,11 @@ const TopicRightTop = styled.div`
         display: flex;
         align-items: center;
         
-        &:first-child {
+        // &:first-child {
             font-size: 0.8rem;
             font-weight: 600;
             gap: 5px;
-        }
+        // }
     }
 `;
 

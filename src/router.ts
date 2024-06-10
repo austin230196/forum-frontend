@@ -3,7 +3,7 @@ import {createBrowserRouter} from "react-router-dom";
 
 
 const Home = lazy(() => import("./pages/Home"));
-// const Details = lazy(() => import("./pages/Details"));
+const Details = lazy(() => import("./pages/Details"));
 const Login = lazy(() => import("./pages/Login"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const Register = lazy(() => import("./pages/Register"));
@@ -34,11 +34,6 @@ const router = createBrowserRouter([
         Component: Profile,
         children: []
     },
-    // {
-    //     path: "/:id",
-    //     Component: Details,
-    //     children: []
-    // },
     {
         path: "/user/welcome",
         Component: UserWelcome,
@@ -52,6 +47,11 @@ const router = createBrowserRouter([
     {
         path: "/update-password",
         Component: UpdatePassword,
+        children: []
+    },
+    {
+        path: "/:id",
+        Component: Details,
         children: []
     },
     {

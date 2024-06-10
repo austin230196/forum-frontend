@@ -24,6 +24,7 @@ interface StoreProps {
 export interface GlobalState extends StoreProps {
     updateCategory: (category: ICategory|null) => Promise<void>;
     updateTopicOrder: (order: 'latest' | 'oldest') => Promise<void>;
+    reloadTopics: () => Promise<void>;
     updateTopicPage: (page: number) => Promise<void>;
     updateUserdata: () => Promise<void>;
     updateActiveSession: () => Promise<void>;
@@ -63,6 +64,14 @@ export const createGlobalStore = (initProps?: Partial<StoreProps>) => {
             set((state) => ({
                 ...state,
                 order: newOrder,
+                topics: res.data
+            })); 
+        },
+        reloadTopics: async() => {
+            const res = await queryClient.fetchQuery(getTopics(state().category, state().order, state().page));
+            if(!res?.success) throw new Error(res?.message);
+            set((state) => ({
+                ...state,
                 topics: res.data
             })); 
         },

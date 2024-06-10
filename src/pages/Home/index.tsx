@@ -5,6 +5,7 @@ const Home = () => {
     const topics = useStore(store as StoreApi<GlobalState>, (state) => state.topics);
     const order = useStore(store as StoreApi<GlobalState>, (state) => state.order);
     const category = useStore(store as StoreApi<GlobalState>, (state) => state.category);
+    const userdata = useStore(store as StoreApi<GlobalState>, (state) => state.userdata?.userdata);
 
     useEffect(() => {
         console.log("UPDATED");
@@ -12,6 +13,13 @@ const Home = () => {
             const params = new URLSearchParams(location.search);
             let cat = params.get("category") || null;
             let ord = params.get("order") || 'latest';
+            console.log({userdata});
+            const localState = new Store(STORE_KEY);
+            if(!localState.get("accessKey")){
+                setTimeout(async() => {
+                    await showLoginHandler();
+                }, 2000);
+            }
             try{
                 await Promise.all([
                     await store?.getState().updateTopicOrder(ord as ('oldest' | 'latest')),
@@ -59,6 +67,10 @@ const Home = () => {
         }
     }
 
+    function showLoginHandler(){
+        document.getElementById("login__backdrop")!.style.display = 'block';
+    }
+
 
     return (
         <MainLayout>
@@ -86,12 +98,17 @@ const Home = () => {
                             (<SkeletonLoader width="100%" height={200} key={i} />)
                         ) :
                         topics?.length ? 
-                        topics?.map((data: any, i: number) => (<Topic key={i} {...data} />))
+                        topics?.map((data: any, i: number) => (<Topic key={i} {...data} isCreator={userdata?._id === data?.creator?._id} />))
                         : <div className="empty__topics">No topics found</div>
                     }
-                    <Stack spacing={2} width="100%">
-                        <Pagination count={10} color="primary" />
-                    </Stack>
+                    {
+                        topics?.length ? 
+                        (
+                            <Stack spacing={2} width="100%">
+                                <Pagination count={10} color="primary" />
+                            </Stack>
+                        ) : null
+                    }
                 </HomeBody>
             </HomeWrapper>
         </MainLayout>
@@ -115,6 +132,8 @@ import { GlobalState } from "../../contexts/store";
 import ICategory from "../../types/Category";
 import { toast } from "react-toastify";
 import { Pagination, Stack } from "@mui/material";
+import Store from "../../utils/Store";
+import { STORE_KEY } from "../../constants";
 
 
 

@@ -1,4 +1,4 @@
-const Nav = ({showLogo=false}: INav) => {
+const Nav = ({showLogo=false, showSearchBar}: INav) => {
     const queryClient = new QueryClient();
     const [showDropdown, setShowDropDown] = useState(false);
     const store = useGlobalContext();
@@ -16,7 +16,7 @@ const Nav = ({showLogo=false}: INav) => {
             try{
                 await store?.getState().updateUserdata();
             }catch(e: any){
-                toast(e.message, {type: 'error'})
+                // toast(e.message, {type: 'error'})
             }finally {
                 setLoading(() => false);
             }
@@ -75,30 +75,35 @@ const Nav = ({showLogo=false}: INav) => {
             <QuickLogin />
             <QuickRegister />
             {showLogo ? <Logo /> : null}
-            <SearchInput>
-                <FiSearch />
-                <input type="text" placeholder="Search forum.." value={search} onChange={changeHandler} />
-                {
-                    searchResults !== null ? searchResults?.length ? 
-                    (
-                        <SearchResults>
-                            {
-                                searchResults?.map((t, i) => (
-                                    <SearchResult key={i}>
-                                        <p>{t?.title}</p>
-                                        <span>{t?.message?.substring(0, 70) + '....'}</span>
-                                    </SearchResult>
-                                ))
-                            }
-                        </SearchResults>
-                    ) : 
-                    (
-                        <SearchResults>
-                            <h4>No results.</h4>
-                        </SearchResults>
-                    ) : null
-                }
-            </SearchInput>
+            {
+                showSearchBar ? 
+                (
+                    <SearchInput>
+                        <FiSearch />
+                        <input type="text" placeholder="Search forum.." value={search} onChange={changeHandler} />
+                        {
+                            searchResults !== null ? searchResults?.length ? 
+                            (
+                                <SearchResults>
+                                    {
+                                        searchResults?.map((t, i) => (
+                                            <SearchResult key={i}>
+                                                <p>{t?.title}</p>
+                                                <span>{t?.message?.substring(0, 70) + '....'}</span>
+                                            </SearchResult>
+                                        ))
+                                    }
+                                </SearchResults>
+                            ) : 
+                            (
+                                <SearchResults>
+                                    <h4>No results.</h4>
+                                </SearchResults>
+                            ) : null
+                        }
+                    </SearchInput>
+                ) : null
+            }
             <NavRight>
                 {/* <Bell>
                     <span></span>
@@ -165,7 +170,8 @@ import { searchTopics } from "../store/queries/topic";
 import { ITopic } from "../types/Topic";
 
 type INav = {
-    showLogo: Boolean
+    showLogo: boolean;
+    showSearchBar: boolean
 }
 
 

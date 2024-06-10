@@ -1,10 +1,9 @@
-const MainLayout = ({children, showSidebar=true}: IMainLayout) => {
-
+const MainLayout = ({children, showSidebar=true, showSearchBar=true}: IMainLayout) => {
     return (
         <MainLayoutWrapper $showSidebar={showSidebar}>
             {showSidebar ? <Sidebar /> : null}
             <MainLayoutBody>
-                <Nav showLogo={!showSidebar} />
+                <Nav showLogo={!showSidebar} showSearchBar={showSearchBar} />
                 <MainLayoutContent>
                     {children}
                 </MainLayoutContent>
@@ -19,7 +18,8 @@ const MainLayout = ({children, showSidebar=true}: IMainLayout) => {
 
 type IMainLayout = {
     children: ReactNode;
-    showSidebar?: Boolean;
+    showSidebar?: boolean;
+    showSearchBar?: boolean;
 };
 
 import styled from "styled-components"
