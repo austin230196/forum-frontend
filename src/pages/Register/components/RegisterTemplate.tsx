@@ -67,7 +67,8 @@ const RegisterTemplate = ({canClose=true, main=false}: IRegisterTemplate) => {
     async function registerUserHandler() {
         setSubmitting(() => true);
         try{
-            const res = await register.mutateAsync({...formstate});
+            const token = await getFCMToken();
+            const res = await register.mutateAsync({...formstate, fcmToken: token});
             const data = await res.data;
             if(!data.success) throw new Error(data.message);
             toast(data.message);
@@ -143,6 +144,7 @@ import { useNavigate } from "react-router-dom";
 import GoogleButton from "../../Login/components/GoogleButton";
 import GithubButton from "../../Login/components/GithubButton";
 import { LoginForm } from "../../Login/components/LoginTemplate";
+import getFCMToken from "../../../utils/get-fcm-token.utils";
 
 
 

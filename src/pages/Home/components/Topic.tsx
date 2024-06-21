@@ -11,10 +11,12 @@ const Topic = ({message, category, title, createdAt, creator, replies, _id, foll
     }
 
 
-    async function toggleFollowTopicHandler(_: any, _id: string){
+    async function toggleFollowTopicHandler(e: MouseEvent<HTMLButtonElement>, _id: string){
+        e.stopPropagation();
         setFollowing(() => true);
         try{
             const res = await toggleFollowMutaion.mutateAsync(_id);
+            console.log({res});
             await store?.getState().reloadTopics();
         }catch(e: any){
             toast(e.message, {
@@ -56,7 +58,8 @@ const Topic = ({message, category, title, createdAt, creator, replies, _id, foll
                     isCreator ? null : 
                     (
                         <button        
-                        disabled={isCreator}                        
+                        disabled={isCreator}     
+                        className="follow"                   
                         onClick={e => toggleFollowTopicHandler(e, _id)}>
                             <FaStar />
                             {following ? <CircularLoader size={15} /> : <span>Follow</span>}
@@ -78,7 +81,7 @@ import { toast } from "react-toastify";
 
 import { useToggleFollowTopic } from "../../../store/mutations/topic";
 import { CircularLoader } from "../../../components";
-import { useState } from "react";
+import { MouseEvent, useState } from "react";
 import { categories } from "../../../components/Sidebar";
 import avatar from "../../../assets/images/avatar.jpeg";
 import { ITopic } from "../../../types/Topic";

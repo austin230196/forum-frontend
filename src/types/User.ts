@@ -1,7 +1,8 @@
 export type IRegister = {
     email: string, 
     password: string, 
-    name: string
+    name: string,
+    fcmToken: string
 }
 
 

@@ -1,6 +1,6 @@
 const Details = () => {
     const params = useParams();
-    const navigate = useNavigate();
+    // const _ = useNavigate();
 
     console.log({params});
     //Now search the database with the params.id
@@ -47,7 +47,7 @@ const Details = () => {
 
 
 import styled from "styled-components";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import MainLayout from "../../layout/MainLayout";
 import { FaComment } from "react-icons/fa";

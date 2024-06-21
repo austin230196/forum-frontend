@@ -4,11 +4,11 @@ const Nav = ({showLogo=false, showSearchBar}: INav) => {
     const store = useGlobalContext();
     const userdata = useStore(store as StoreApi<GlobalState>, (state) => state?.userdata?.userdata);
     const logout = useLogout();
-    const [loading, setLoading] = useState(true);
+    const [_, setLoading] = useState(true);
     const theme = useStore(store as StoreApi<GlobalState>, (state) => state.theme);
     const navigate = useNavigate();
     const [search, setSearch] = useState('');
-    const clearer = useRef<number|null>(null);
+    const clearer = useRef<NodeJS.Timeout|null>(null);
     const [searchResults, setSearchResults] = useState<ITopic[]|null>(null);
 
     useEffect(() => {

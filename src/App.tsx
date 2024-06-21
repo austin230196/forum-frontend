@@ -1,6 +1,17 @@
 const App = () => {
     const store = useGlobalContext();
+    const {requestPermission} = usePermissions();
+    const flag = useRef(true);
     const theme = useStore(store as StoreApi<GlobalState>, (state) => state.theme);
+
+    useEffect(() => {
+        if(flag.current){
+            (async() => {
+                await requestPermission();
+            })()
+            flag.current = false;
+        }
+    }, [])
 
     console.log({theme});
     return (
@@ -16,7 +27,7 @@ const App = () => {
 
 
 
-import { Suspense } from "react"
+import { Suspense, useEffect, useRef } from "react"
 import styled from "styled-components"
 import { RouterProvider } from "react-router-dom"
 
@@ -25,6 +36,7 @@ import router from "./router"
 import { useGlobalContext } from "./contexts/GlobalContext"
 import { StoreApi, useStore } from "zustand";
 import { GlobalState } from "./contexts/store";
+import usePermissions from "./hooks/usePermissions";
 
 
 
