@@ -2,6 +2,7 @@ const Home = () => {
     const location = useLocation();
     const [loading, setLoading] = useState(true);
     const store = useGlobalContext();
+    const theme = useTheme();
     const topics = useStore(store as StoreApi<GlobalState>, (state) => state.topics);
     const order = useStore(store as StoreApi<GlobalState>, (state) => state.order);
     const category = useStore(store as StoreApi<GlobalState>, (state) => state.category);
@@ -99,7 +100,7 @@ const Home = () => {
                         ) :
                         topics?.length ? 
                         topics?.map((data: any, i: number) => (<Topic key={i} {...data} isCreator={userdata?._id === data?.creator?._id} />))
-                        : <div className="empty__topics">No topics found</div>
+                        : <div className="empty__topics" style={{color: theme.dark.main}}>No topics found</div>
                     }
                     {
                         topics?.length ? 
@@ -117,7 +118,7 @@ const Home = () => {
 
 
 
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { useEffect, useState } from "react";
 
 import MainLayout from "../../layout/MainLayout";

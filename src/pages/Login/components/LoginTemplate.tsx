@@ -32,6 +32,7 @@ const LoginTemplate = ({canClose=true, main=false}: ILoginTemplate) => {
                     navigate("/");
                 }
                 const provider = window.localStorage.getItem(SOCIAL_AUTH_PROVIDER) as 'github' | 'google';
+                console.log({provider});
                 socialLogin.mutateAsync({provider, code})
                 .then(async data => {
                     console.log({data});

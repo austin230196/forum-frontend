@@ -15,6 +15,11 @@ const SettingsModal = ({close}: {close: () => void}) => {
         }
     }, [settings])
 
+
+    useEffect(() => {
+        console.log({showChangePassword});
+    }, [showChangePassword])
+
     function changeSwitchHandler(){
         if(twoFA) setShowDisableDialog(() => true);
         else setShowEnableDialog(() => true);
@@ -34,7 +39,9 @@ const SettingsModal = ({close}: {close: () => void}) => {
 
     function hideChangePasswordHandler(){
         console.log("REACHED HERE");
-        setShowChangePassword(() => false);
+        console.log({showChangePassword});
+        setShowChangePassword(() => !showChangePassword);
+        console.log({showChangePassword});
     }
 
     return (
@@ -54,11 +61,13 @@ const SettingsModal = ({close}: {close: () => void}) => {
                         userdata?.accountType === 'manual' 
                         ?
                         (
+                            <>
+                            {showChangePassword ? <ChangePassword close={hideChangePasswordHandler} /> : null}
                             <SettingsButton onClick={showChangePasswordHandler}>
-                                {showChangePassword ? <ChangePassword close={hideChangePasswordHandler} /> : null}
                                 <p>Change Password</p>
                                 <span><AiOutlineArrowRight /> </span>
                             </SettingsButton>
+                            </>
                         ) : null
                     }
                 </SettingsControls>

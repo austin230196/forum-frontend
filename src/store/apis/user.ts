@@ -127,6 +127,7 @@ export const uploadFile = async(filesize: number, filename: string, file: ArrayB
 
 export const getUserdata = async() => {
     const token = await store.get("accessKey");
+    console.log({token});
     const res = await axios.get("/user", {
         headers: {
             "Authorization": `Bearer ${token}`,
