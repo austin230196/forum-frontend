@@ -1,5 +1,8 @@
 const Subscribe = () => {
-    const [show, setShow] = useState<boolean>(!!!window.localStorage.getItem(SUBSCRIBER_KEY));
+    const store = useGlobalContext();
+    const userdata = useStore(store as StoreApi<GlobalState>, (state) => state.userdata);
+    const updateUserdata = useStore(store as StoreApi<GlobalState>, (state) => state.updateUserdata);
+    const [show, setShow] = useState<boolean>(() => !userdata?.subscribed);
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const theme = useTheme();
@@ -10,16 +13,20 @@ const Subscribe = () => {
         setShow(() => false);
     }
 
+    useEffect(() => {
+        setShow(() => !userdata?.subscribed)
+        console.log({show})
+    }, [userdata])
+
     
     async function subscribeHandler(){
         setLoading(() => true);
         try{
             if(!email) throw new Error("Please enter your email");
             const res = await subscribe.mutateAsync(email);
-            console.log({res});
-            if(!res.success) throw new Error(res.message);
-            window.localStorage.setItem(SUBSCRIBER_KEY, res.data);
+            if(res.status !== "success") throw new Error(res.message);
             toast(res.message, {type: 'success'});
+            await updateUserdata();
         }catch(e: any){
             toast(e.message, {type: 'error'})
         }finally{
@@ -68,7 +75,7 @@ const Subscribe = () => {
 
 
 import styled, { useTheme } from "styled-components";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 import Backdrop from "./Backdrop";
 import image from "../assets/svgs/share_link.svg";
@@ -76,7 +83,9 @@ import {CircularLoader} from "./Loader";
 import { useSubscribe } from "../store/mutations/subscriber";
 import { toast } from "react-toastify";
 import Regex from "../utils/Regex";
-import { SUBSCRIBER_KEY } from "../constants";
+import { StoreApi, useStore } from "zustand";
+import { GlobalState } from "../contexts/store";
+import { useGlobalContext } from "../contexts/GlobalContext";
 
 
 

@@ -81,6 +81,7 @@ const RegisterTemplate = ({canClose=true, main=false}: IRegisterTemplate) => {
         }
     }
 
+
     return (
         <RegisterTemplateWrapper $main={main}>
             {canClose && (<span>

@@ -1,7 +1,6 @@
-export const BASE_URL = "http://127.0.0.1:9090/api/v1";
-// export const BASE_URL = "https://api.programmable-forum.online/api/v1";
+export const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-export const STORE_KEY = "forum-sse";
+export const STORE_KEY = import.meta.env.VITE_TOKEN_KEY;
 
 export const SOCIAL_AUTH_PROVIDER = 'forum-auth-provider';
 

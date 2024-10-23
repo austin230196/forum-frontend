@@ -6,7 +6,7 @@ import { createTopic, toggleFollowTopic } from "../apis/topic";
 
 export const useCreateTopic = () => {
     return useMutation({
-        mutationFn: (data: ICreateTopic) => createTopic(data),
+        mutationFn: async (data: ICreateTopic) => await createTopic(data),
         mutationKey: ["createTopic"]
     })
 }

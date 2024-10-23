@@ -1,6 +1,6 @@
 import {useMutation} from "@tanstack/react-query";
 import { ILogin, IRegister } from "../../types/User";
-import { changePassword, complete2FASetup, forgotPassword, login, loginSocialUser, logout, register, updatePassword, uploadFile, verify2FACode } from "../apis/user";
+import { changePassword, complete2FASetup, forgotPassword, login, loginSocialUser, logout, register, registerSocialUser, updatePassword, uploadFile, verify2FACode } from "../apis/user";
 
 
 
@@ -56,6 +56,14 @@ export const useLoginSocialUser = () => {
     return useMutation({
         mutationFn: async ({provider, code}: {provider: 'google'|'github', code: string}) => await loginSocialUser(provider, code),
         mutationKey: ["login-social-user"]
+    })
+}
+
+
+export const useRegisterSocialUser = () => {
+    return useMutation({
+        mutationFn: async ({provider, code, fcmToken}: {provider: 'google'|'github', code: string, fcmToken: string}) => await registerSocialUser(provider, code, fcmToken),
+        mutationKey: ["register-social-user"]
     })
 }
 

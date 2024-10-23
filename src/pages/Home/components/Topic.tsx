@@ -1,4 +1,4 @@
-const Topic = ({message, category, title, createdAt, creator, replies, _id, followers, isCreator}: ITopic & {isCreator: boolean}) => {
+const Topic = ({message, category, title, createdAt, creator, replies, _id, followers, isCreator, isFollowing}: ITopic & {isCreator: boolean}) => {
     const [following, setFollowing] = useState<boolean>(false);
     const store = useGlobalContext();
     const navigate = useNavigate();
@@ -62,7 +62,7 @@ const Topic = ({message, category, title, createdAt, creator, replies, _id, foll
                         className="follow"                   
                         onClick={e => toggleFollowTopicHandler(e, _id)}>
                             <FaStar />
-                            {following ? <CircularLoader size={15} /> : <span>Follow</span>}
+                            {following ? <CircularLoader size={15} /> : <span>{isFollowing ? 'Unfollow' : 'Follow'}</span>}
                         </button>
                     )
                 }

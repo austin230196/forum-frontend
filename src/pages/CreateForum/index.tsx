@@ -63,9 +63,8 @@ const CreateForum = ({closeModal}: ICreateForum) => {
         try{
             if(!userdata) navigate("/login");
             const res = await topicCreator.mutateAsync({...formstate, category: formstate.category as Category});
-            console.log({res});
-            const data = await res.data;
-            if(!data.success) throw new Error(data.message);
+            const data = res.data;
+            if(data.status !== "success") throw new Error(data.message);
             toast(data.message);
             closeModal();
             await store?.getState().updateCategory(null);

@@ -74,6 +74,10 @@ export const loginSocialUser = async(provider: 'google'|'github', code: string) 
     return (await axios.post(`/user/login/${provider}/callback`, {code}));
 }
 
+export const registerSocialUser = async(provider: 'google'|'github', code: string, fcmToken: string) => {
+    return (await axios.post(`/user/register/${provider}/callback`, {code, fcmToken}));
+}
+
 export const get2FAQrCode = async() => {
     const token = await store.get("accessKey");
     const res = await axios.get("/user/2fa/setup", {
@@ -127,7 +131,6 @@ export const uploadFile = async(filesize: number, filename: string, file: ArrayB
 
 export const getUserdata = async() => {
     const token = await store.get("accessKey");
-    console.log({token});
     const res = await axios.get("/user", {
         headers: {
             "Authorization": `Bearer ${token}`,

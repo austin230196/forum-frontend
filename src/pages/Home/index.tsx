@@ -9,27 +9,25 @@ const Home = () => {
     const userdata = useStore(store as StoreApi<GlobalState>, (state) => state.userdata?.userdata);
 
     useEffect(() => {
-        console.log("UPDATED");
         (async() => {
             const params = new URLSearchParams(location.search);
             let cat = params.get("category") || null;
             let ord = params.get("order") || 'latest';
-            console.log({userdata});
-            const localState = new Store(STORE_KEY);
-            if(!localState.get("accessKey")){
-                setTimeout(async() => {
-                    await showLoginHandler();
-                }, 2000);
-            }
             try{
-                await Promise.all([
+                const localState = new Store(STORE_KEY);
+                const token = await localState.get("accessKey");
+                if(!token){
+                    setTimeout(async() => {
+                        await showLoginHandler();
+                    }, 2000);
+                }
+                const res = await Promise.all([
                     await store?.getState().updateTopicOrder(ord as ('oldest' | 'latest')),
                     await store?.getState().updateCategory(cat as ICategory|null)
                 ])
+                console.log({res})
             }catch(e: any){
-                toast(e.message, {
-                    type: 'error'
-                })
+                toast.error(e.message)
             }finally{
                 setLoading(() => false);
             }
@@ -99,7 +97,7 @@ const Home = () => {
                             (<SkeletonLoader width="100%" height={200} key={i} />)
                         ) :
                         topics?.length ? 
-                        topics?.map((data: any, i: number) => (<Topic key={i} {...data} isCreator={userdata?._id === data?.creator?._id} />))
+                        topics?.map((data: any, i: number) => (<Topic key={i} {...data} isCreator={userdata?.id === data?.creator?._id} isFollowing={data?.followers?.includes(userdata?.id)} />))
                         : <div className="empty__topics" style={{color: theme.dark.main}}>No topics found</div>
                     }
                     {

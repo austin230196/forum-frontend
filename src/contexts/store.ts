@@ -51,7 +51,7 @@ export const createGlobalStore = (initProps?: Partial<StoreProps>) => {
         ...initProps,
         updateCategory: async(newCategory: ICategory|null) => {
             const res = await queryClient.fetchQuery(getTopics(newCategory, state().order, state().page));
-            if(!res?.success) throw new Error(res?.message);
+            if(res.status !== "success") throw new Error(res?.message);
             set((state) => ({
                 ...state,
                 category: newCategory,
@@ -60,7 +60,7 @@ export const createGlobalStore = (initProps?: Partial<StoreProps>) => {
         },
         updateTopicOrder: async(newOrder: 'latest' | 'oldest') => {
             const res = await queryClient.fetchQuery(getTopics(state().category, newOrder, state().page));
-            if(!res?.success) throw new Error(res?.message);
+            if(res.status !== "success") throw new Error(res?.message);
             set((state) => ({
                 ...state,
                 order: newOrder,
@@ -69,7 +69,7 @@ export const createGlobalStore = (initProps?: Partial<StoreProps>) => {
         },
         reloadTopics: async() => {
             const res = await queryClient.fetchQuery(getTopics(state().category, state().order, state().page));
-            if(!res?.success) throw new Error(res?.message);
+            if(res.status !== "success") throw new Error(res?.message);
             set((state) => ({
                 ...state,
                 topics: res.data
@@ -77,7 +77,7 @@ export const createGlobalStore = (initProps?: Partial<StoreProps>) => {
         },
         updateTopicPage: async(newPage) => {
             const res = await queryClient.fetchQuery(getTopics(state().category, state().order, newPage));
-            if(!res?.success) throw new Error(res?.message);
+            if(res.status !== "success") throw new Error(res?.message);
             set((state) => ({
                 ...state,
                 page: newPage,
@@ -86,7 +86,7 @@ export const createGlobalStore = (initProps?: Partial<StoreProps>) => {
         },
         updateUserdata: async() => {
             const res = await queryClient.fetchQuery(getUserdata());
-            if(!res?.success) throw new Error(res?.message);
+            if(res.status !== "success") throw new Error(res?.message);
             set((state) => ({
                 ...state,
                 userdata: res.data
@@ -94,7 +94,7 @@ export const createGlobalStore = (initProps?: Partial<StoreProps>) => {
         },
         updateActiveSession: async() => {
             const res = await queryClient.fetchQuery(getActiveSession());
-            if(!res?.success) throw new Error(res?.message);
+            if(res.status !== "success") throw new Error(res?.message);
             console.log({res});
             set((state) => ({
                 ...state,

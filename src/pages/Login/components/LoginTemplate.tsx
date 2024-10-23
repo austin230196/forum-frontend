@@ -1,9 +1,6 @@
 const LoginTemplate = ({canClose=true, main=false}: ILoginTemplate) => {
-    const flag = useRef(true);
     const login = useLoginUser();
     const navigate = useNavigate();
-    const location = useLocation();
-    const socialLogin = useLoginSocialUser();
     const [submitting, setSubmitting] = useState(false);
     const [disabled, setDisabled] = useState(false);
     const [show2FA, setShow2FA] = useState(false);
@@ -17,34 +14,18 @@ const LoginTemplate = ({canClose=true, main=false}: ILoginTemplate) => {
         password: null
     })
 
+
     useEffect(() => {
-        if(flag.current){
-            const urlParams = new URLSearchParams(location.search);
-            // const paramProxy = new Proxy(urlParams, {
-            //     get: (target, prop) => target.get(prop as string)
-            // })
-            const code = urlParams.get("code");
-            console.log({code});
-            if(code){
-                setDisabled(() => true);
-                if(code === 'redirect_uri_mismatch&error_description'){
-                    console.log("REDIRECT URI MISMATCH");
-                    navigate("/");
-                }
-                const provider = window.localStorage.getItem(SOCIAL_AUTH_PROVIDER) as 'github' | 'google';
-                console.log({provider});
-                socialLogin.mutateAsync({provider, code})
-                .then(async data => {
-                    console.log({data});
-                    const res = data.data;
-                    await loginUser(res);
-                    window.localStorage.removeItem(SOCIAL_AUTH_PROVIDER);
-                })
-                .catch(e => console.error({e}))
-            }
-            flag.current = false;
+        // get the URL parameters which will include the auth token
+        const params = window.location.search;
+        if (window.opener) {
+            setDisabled(() => true);
+            // send them to the opening window
+            window.opener.postMessage(params);
+            // close the popup
+            window.close();
         }
-    }, [])
+    }, []);
 
     function changeHandler(e: ChangeEvent<HTMLInputElement>): void{
         const {name, value} = e.target;
@@ -83,7 +64,6 @@ const LoginTemplate = ({canClose=true, main=false}: ILoginTemplate) => {
         setSubmitting(() => true);
         try{
             const res = await login.mutateAsync({...formstate});
-            console.log({res});
             let data: {message: string, success: boolean, data?: any} = await res.data;
             if(!data.success) throw new Error(data.message);
             await loginUser(data);
@@ -95,8 +75,9 @@ const LoginTemplate = ({canClose=true, main=false}: ILoginTemplate) => {
     }
 
     async function loginUser(data: any){
-        if(data.data.hasOwnProperty("twoFA")){
+        if(data.status === "twofa"){
             //then run the 2fa input
+            //EDIT
             setShow2FA(() => true);
             setEmail(() => data.data.email);
             toast(data.message);
@@ -114,7 +95,7 @@ const LoginTemplate = ({canClose=true, main=false}: ILoginTemplate) => {
         }else {
             navigate("/");
         }
-        toast(data.message, {});
+        toast(data.message);
     }
 
     function showRegisterHandler(){
@@ -152,8 +133,8 @@ const LoginTemplate = ({canClose=true, main=false}: ILoginTemplate) => {
                 <aside id="social__auth">
                     <p>or login with</p>
                     <div>
-                        <GoogleButton disabled={disabled} />
-                        <GithubButton disabled={disabled} />
+                        <GoogleButton complete={loginUser} disabled={disabled} />
+                        <GithubButton complete={loginUser} disabled={disabled} />
                     </div>
                 </aside>
                 <section>
@@ -176,17 +157,17 @@ const LoginTemplate = ({canClose=true, main=false}: ILoginTemplate) => {
 
 import styled from "styled-components";
 import { MdClear, MdInfo } from "react-icons/md";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { ChangeEvent, useEffect, useState } from "react";
 import {toast} from "react-toastify";
 
 import Logo from "../../../components/Logo";
 import Regex from "../../../utils/Regex";
 import {CircularLoader} from "../../../components";
-import { useLoginSocialUser, useLoginUser } from "../../../store/mutations/user";
+import { useLoginUser } from "../../../store/mutations/user";
 import GoogleButton from "./GoogleButton";
 import GithubButton from "./GithubButton";
-import { SOCIAL_AUTH_PROVIDER, STORE_KEY } from "../../../constants";
+import { STORE_KEY } from "../../../constants";
 import Store from "../../../utils/Store";
 import TwoFADialog from "./TwoFADialog";
 
@@ -198,7 +179,8 @@ type ILoginTemplate = {
 }
 
 export type IAuthButton = {
-    disabled?: boolean
+    disabled?: boolean;
+    complete?: (data: any) => Promise<void>;
 }
 
 

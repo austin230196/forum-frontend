@@ -6,7 +6,8 @@ export default class Store {
 
     public async get(key: "refreshKey" | "accessKey", defaultValue?: string) {
         let value = window.localStorage.getItem(this.storeKey);
-        if(!value) await this.set(key, defaultValue!);
+        if((!value || value === "undefined") && !defaultValue) return null;
+        else if ((!value || value === "undefined") && defaultValue) await this.set(key, defaultValue!);
         else this.store = JSON.parse(value!);
         return this.store[key];
     }
@@ -17,7 +18,7 @@ export default class Store {
         let storage = window.localStorage.getItem(this.storeKey);
         //if there is no storage we create a new one using the template
         let template = null;
-        if(!storage) template = this.store;
+        if(!storage || storage === "undefined") template = this.store;
         else template = JSON.parse(storage);
         template[key] = value;
         this.store = {...template};
